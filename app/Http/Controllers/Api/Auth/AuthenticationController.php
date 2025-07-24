@@ -15,6 +15,9 @@ class AuthenticationController extends Controller
 {
     public function __construct(private AuthenticationServiceInterface $authService) {}
 
+    /**
+     * @unauthenticated
+     */
     public function login(LoginRequest $request): JsonResponse
     {
         try {
@@ -33,6 +36,9 @@ class AuthenticationController extends Controller
         }
     }
 
+    /**
+     * @unauthenticated
+     */
     public function register(RegisterRequest $request): JsonResponse
     {
         $user = $this->authService->register($request->validated());
@@ -52,6 +58,9 @@ class AuthenticationController extends Controller
         ]);
     }
 
+    /**
+     * @unauthenticated
+     */
     public function forgotPassword(ForgotPasswordRequest $request): JsonResponse
     {
         $this->authService->sendResetPasswordEmail($request->validated('email'));
@@ -61,6 +70,9 @@ class AuthenticationController extends Controller
         ]);
     }
 
+    /**
+     * @unauthenticated
+     */
     public function resetPassword(ResetPasswordRequest $request): JsonResponse
     {
         try {
