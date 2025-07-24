@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Services\AuthenticationService;
 use App\Services\BaseService;
+use App\Services\Interfaces\AuthenticationServiceInterface;
 use App\Services\Interfaces\BaseServiceInterface;
 use App\Services\Interfaces\UserServiceInterface;
 use App\Services\UserService;
@@ -17,6 +19,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(BaseServiceInterface::class, BaseService::class);
 
+        $this->app->bind(AuthenticationServiceInterface::class, AuthenticationService::class);
         $this->app->bind(UserServiceInterface::class, UserService::class);
     }
 
