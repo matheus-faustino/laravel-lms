@@ -45,7 +45,6 @@ interface BaseServiceInterface
      *
      * @param array $data
      * @return Model
-     * @throws \Illuminate\Validation\ValidationException
      */
     public function create(array $data): Model;
 
