@@ -58,6 +58,27 @@ class EnrollmentFactory extends Factory
         return $this->state([
             'completed_at' => null,
             'progress_percentage' => fake()->randomFloat(2, 10, 95),
+            'active' => true,
+        ]);
+    }
+
+    /**
+     * Create an active enrollment.
+     */
+    public function active(): static
+    {
+        return $this->state([
+            'active' => true,
+        ]);
+    }
+
+    /**
+     * Create an inactive enrollment.
+     */
+    public function inactive(): static
+    {
+        return $this->state([
+            'active' => false,
         ]);
     }
 
