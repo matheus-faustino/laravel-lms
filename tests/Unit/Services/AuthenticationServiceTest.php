@@ -6,6 +6,7 @@ use Tests\TestCase;
 use App\Models\User;
 use App\Services\AuthenticationService;
 use App\Services\Interfaces\UserServiceInterface;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Laravel\Sanctum\NewAccessToken;
@@ -13,6 +14,8 @@ use Mockery;
 
 class AuthenticationServiceTest extends TestCase
 {
+    use RefreshDatabase;
+
     private AuthenticationService $service;
     private UserServiceInterface $userService;
 

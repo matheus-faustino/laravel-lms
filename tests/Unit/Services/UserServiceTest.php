@@ -6,11 +6,14 @@ use Tests\TestCase;
 use App\Models\User;
 use App\Services\UserService;
 use App\Repositories\Interfaces\UserRepositoryInterface;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Mockery;
 
 class UserServiceTest extends TestCase
 {
+    use RefreshDatabase;
+
     private UserService $service;
     private UserRepositoryInterface $repository;
 

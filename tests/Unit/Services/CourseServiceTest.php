@@ -6,12 +6,14 @@ use Tests\TestCase;
 use App\Models\Course;
 use App\Services\CourseService;
 use App\Repositories\Interfaces\CourseRepositoryInterface;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Mockery;
 
 class CourseServiceTest extends TestCase
 {
+    use RefreshDatabase;
+
     private CourseService $service;
     private CourseRepositoryInterface $repository;
 
