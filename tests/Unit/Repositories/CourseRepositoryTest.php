@@ -1,6 +1,5 @@
 <?php
 
-// CourseRepositoryTest.php
 namespace Tests\Unit\Repositories;
 
 use Tests\TestCase;
@@ -76,7 +75,9 @@ class CourseRepositoryTest extends TestCase
         Enrollment::factory()->create([
             'student_id' => $student->id,
             'course_id' => $course1->id,
-            'progress_percentage' => 50.0
+            'progress_percentage' => 50.0,
+            'enrolled_at' => now(),
+            'active' => true
         ]);
 
         $results = $this->repository->getCoursesForStudent($student->id);
@@ -93,10 +94,12 @@ class CourseRepositoryTest extends TestCase
         $student = User::factory()->student()->create();
         $course = Course::factory()->active()->create();
 
-        Enrollment::factory()->create([
+        $enrollment = Enrollment::factory()->create([
             'student_id' => $student->id,
             'course_id' => $course->id,
-            'progress_percentage' => 75.0
+            'progress_percentage' => 75.0,
+            'enrolled_at' => now(),
+            'active' => true
         ]);
 
         $result = $this->repository->findForStudent($course->id, $student->id);
@@ -104,6 +107,30 @@ class CourseRepositoryTest extends TestCase
         $this->assertNotNull($result);
         $this->assertEquals($course->id, $result->id);
         $this->assertNotNull($result->enrollment_id);
+        $this->assertEquals($enrollment->id, $result->enrollment_id);
         $this->assertEquals(75.0, $result->progress_percentage);
+    }
+
+    public function test_find_for_student_returns_course_without_enrollment_when_not_enrolled()
+    {
+        $student = User::factory()->student()->create();
+        $course = Course::factory()->active()->create();
+
+        $result = $this->repository->findForStudent($course->id, $student->id);
+
+        $this->assertNotNull($result);
+        $this->assertEquals($course->id, $result->id);
+        $this->assertNull($result->enrollment_id);
+        $this->assertNull($result->progress_percentage);
+    }
+
+    public function test_find_for_student_returns_null_for_inactive_course()
+    {
+        $student = User::factory()->student()->create();
+        $course = Course::factory()->inactive()->create();
+
+        $result = $this->repository->findForStudent($course->id, $student->id);
+
+        $this->assertNull($result);
     }
 }

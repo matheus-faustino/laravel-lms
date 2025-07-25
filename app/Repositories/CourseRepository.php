@@ -106,8 +106,9 @@ class CourseRepository extends BaseRepository implements CourseRepositoryInterfa
      */
     public function findForStudent(int $courseId, int $studentId): ?Course
     {
-        return $this->model
-            ->with(['modules.lessons'])
+        $course = $this->model
+            ->where('courses.id', $courseId)
+            ->where('courses.active', true)
             ->leftJoin('enrollments', function ($join) use ($studentId) {
                 $join->on('courses.id', '=', 'enrollments.course_id')
                     ->where('enrollments.student_id', $studentId)
@@ -120,8 +121,14 @@ class CourseRepository extends BaseRepository implements CourseRepositoryInterfa
                 'enrollments.enrolled_at',
                 'enrollments.completed_at'
             )
-            ->where('courses.id', $courseId)
-            ->where('courses.active', true)
             ->first();
+
+        if (!$course) {
+            return null;
+        }
+
+        $course->load(['modules.lessons']);
+
+        return $course;
     }
 }
