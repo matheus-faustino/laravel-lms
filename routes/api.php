@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\Admin\CourseController as AdminCourseController;
 use App\Http\Controllers\Api\Admin\EnrollmentController as AdminEnrollmentController;
+use App\Http\Controllers\Api\Admin\ModuleController;
 use App\Http\Controllers\Api\Admin\UserController;
 use App\Http\Controllers\Api\Auth\AuthenticationController;
 use App\Http\Controllers\Api\Student\CourseController as StudentCourseController;
@@ -31,6 +32,13 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(functi
     Route::apiResource('users', UserController::class);
     Route::apiResource('courses', AdminCourseController::class);
     Route::put('courses/{id}/toggle-status', [AdminCourseController::class, 'toggleStatus']);
+
+    Route::get('courses/{courseId}/modules', [ModuleController::class, 'index']);
+    Route::post('courses/{courseId}/modules', [ModuleController::class, 'store']);
+    Route::get('courses/{courseId}/modules/{id}', [ModuleController::class, 'show']);
+    Route::put('courses/{courseId}/modules/{id}', [ModuleController::class, 'update']);
+    Route::delete('courses/{courseId}/modules/{id}', [ModuleController::class, 'destroy']);
+    Route::put('courses/{courseId}/modules/{id}/reorder', [ModuleController::class, 'reorder']);
 
     Route::get('enrollments/stats', [AdminEnrollmentController::class, 'stats']);
     Route::apiResource('enrollments', AdminEnrollmentController::class)->except(['update']);
