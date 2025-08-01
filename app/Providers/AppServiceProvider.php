@@ -10,8 +10,10 @@ use App\Services\Interfaces\AuthenticationServiceInterface;
 use App\Services\Interfaces\BaseServiceInterface;
 use App\Services\Interfaces\CourseServiceInterface;
 use App\Services\Interfaces\EnrollmentServiceInterface;
+use App\Services\Interfaces\LessonServiceInterface;
 use App\Services\Interfaces\ModuleServiceInterface;
 use App\Services\Interfaces\UserServiceInterface;
+use App\Services\LessonService;
 use App\Services\ModuleService;
 use App\Services\UserService;
 use Dedoc\Scramble\Scramble;
@@ -33,6 +35,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(CourseServiceInterface::class, CourseService::class);
         $this->app->bind(EnrollmentServiceInterface::class, EnrollmentService::class);
         $this->app->bind(ModuleServiceInterface::class, ModuleService::class);
+        $this->app->bind(LessonServiceInterface::class, LessonService::class);
     }
 
     /**

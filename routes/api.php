@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\Admin\CourseController as AdminCourseController;
 use App\Http\Controllers\Api\Admin\EnrollmentController as AdminEnrollmentController;
+use App\Http\Controllers\Api\Admin\LessonController;
 use App\Http\Controllers\Api\Admin\ModuleController;
 use App\Http\Controllers\Api\Admin\UserController;
 use App\Http\Controllers\Api\Auth\AuthenticationController;
@@ -39,6 +40,13 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(functi
     Route::put('courses/{courseId}/modules/{id}', [ModuleController::class, 'update']);
     Route::delete('courses/{courseId}/modules/{id}', [ModuleController::class, 'destroy']);
     Route::put('courses/{courseId}/modules/{id}/reorder', [ModuleController::class, 'reorder']);
+
+    Route::get('modules/{moduleId}/lessons', [LessonController::class, 'index']);
+    Route::post('modules/{moduleId}/lessons', [LessonController::class, 'store']);
+    Route::get('modules/{moduleId}/lessons/{id}', [LessonController::class, 'show']);
+    Route::put('modules/{moduleId}/lessons/{id}', [LessonController::class, 'update']);
+    Route::delete('modules/{moduleId}/lessons/{id}', [LessonController::class, 'destroy']);
+    Route::put('modules/{moduleId}/lessons/{id}/reorder', [LessonController::class, 'reorder']);
 
     Route::get('enrollments/stats', [AdminEnrollmentController::class, 'stats']);
     Route::apiResource('enrollments', AdminEnrollmentController::class)->except(['update']);
