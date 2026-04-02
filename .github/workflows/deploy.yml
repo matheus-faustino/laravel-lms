@@ -56,7 +56,7 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: ${{ secrets.SERVER_PORT }}
           script: |
-            cd /var/www/laravel-lms
+            cd ${{ secrets.DEPLOY_PATH }}
             git pull origin main
             composer install --optimize-autoloader
             php artisan migrate --force
