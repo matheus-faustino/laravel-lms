@@ -5,8 +5,8 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', fn () => view('welcome'))->name('landing');
-Route::get('/home', fn () => view('home'))->name('home')->middleware('auth');
+Route::get('/', fn() => view('welcome'))->name('landing');
+Route::get('/home', fn() => view('home'))->name('home')->middleware('auth');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout')->middleware('auth');
 
 Route::get('/login', [LoginController::class, 'form'])->name('login')->middleware('guest');
