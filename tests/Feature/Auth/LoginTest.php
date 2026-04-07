@@ -158,22 +158,4 @@ class LoginTest extends TestCase
 
         $this->post('/logout');
     }
-
-    // -------------------------------------------------------------------------
-    // Bug #4 documentation
-    // -------------------------------------------------------------------------
-
-    /**
-     * @bug bootstrap/app.php registers a \Throwable renderable that intercepts
-     *      ALL exceptions — including ValidationException and AuthenticationException
-     *      — returning a JSON 500 instead of the expected redirect/error responses.
-     *      Fix: remove or narrow the \Throwable renderable in bootstrap/app.php.
-     */
-    public function test_exception_handler_converts_validation_exception_to_500_due_to_bug(): void
-    {
-        // A missing required field should redirect back with errors, but the
-        // \Throwable handler intercepts the ValidationException first.
-        $this->post('/login', ['password' => 'secret1234'])
-            ->assertStatus(500);
-    }
 }
