@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Enums\RoleEnum;
 use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -55,6 +56,7 @@ class UserServiceTest extends TestCase
             'name'     => 'Bob',
             'email'    => 'bob@example.com',
             'password' => 'secret1234',
+            'role' => RoleEnum::USER,
         ];
 
         $user = $this->service->createUser($attributes);
@@ -100,5 +102,14 @@ class UserServiceTest extends TestCase
 
         $this->assertTrue($result);
         $this->assertDatabaseMissing('users', ['id' => $user->id]);
+    }
+
+    public function test_get_users_count_returns_users_count(): void
+    {
+        User::factory(10)->create();
+
+        $result = $this->service->getUsersCount();
+
+        $this->assertEquals(10, $result);
     }
 }

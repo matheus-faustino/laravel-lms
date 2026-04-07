@@ -48,4 +48,10 @@ class UserService implements UserServiceInterface
             return User::query()->findOrFail($id)->delete();
         });
     }
+
+    /** @inheritDoc */
+    public function getUsersCount(array $criteria = []): int
+    {
+        return User::query()->where($criteria)->count();
+    }
 }

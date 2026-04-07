@@ -2,6 +2,7 @@
 
 namespace App\Interfaces\Services;
 
+use App\Enums\RoleEnum;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -48,4 +49,12 @@ interface UserServiceInterface
      * @return bool True on success, false otherwise.
      */
     public function deleteUser(int $id): bool;
+
+    /**
+     * Get users count
+     * 
+     * @param RoleEnum $role The user role
+     * @return int
+     */
+    public function getUsersCount(array $criteria = []): int;
 }
