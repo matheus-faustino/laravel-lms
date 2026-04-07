@@ -100,21 +100,6 @@ class PasswordResetTest extends TestCase
     }
 
     // -------------------------------------------------------------------------
-    // Reset password form
-    // -------------------------------------------------------------------------
-
-    /**
-     * @bug ResetPasswordController::resetPasswordForm(string $token) declares a
-     *      $token parameter, but the route GET /reset-password has no {token}
-     *      segment — Laravel cannot resolve the argument and throws a fatal error
-     *      (500). Fix: change the route to GET /reset-password/{token}.
-     */
-    public function test_reset_password_form_returns_error_due_to_missing_token_route_param(): void
-    {
-        $this->get('/reset-password')->assertStatus(500);
-    }
-
-    // -------------------------------------------------------------------------
     // Successful password reset
     // -------------------------------------------------------------------------
 

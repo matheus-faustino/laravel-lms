@@ -36,7 +36,7 @@ Route::post('/register', [RegisterController::class, 'register'])->name('registe
 
 Route::get('/forgot-password', [ResetPasswordController::class, 'forgotPasswordForm'])->name('password.request');
 Route::post('/forgot-password', [ResetPasswordController::class, 'sendPasswordResetMail']);
-Route::get('/reset-password', [ResetPasswordController::class, 'resetPasswordForm'])->name('password.reset');
+Route::get('/reset-password/{token}', [ResetPasswordController::class, 'resetPasswordForm'])->name('password.reset');
 Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword']);
 
 Route::prefix('/admin')->as('admin.')->group(function () {
