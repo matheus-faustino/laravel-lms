@@ -56,10 +56,13 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: ${{ secrets.SERVER_PORT }}
           script: |
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
+
             cd ${{ secrets.DEPLOY_PATH }}
             git pull origin main
             composer install --optimize-autoloader
             php artisan migrate --force
             php artisan optimize:clear
             php artisan queue:restart
-            ${{ secrets.SERVER_NPM_PATH }} ci && ${{ secrets.SERVER_NPM_PATH }} run build
+            npm ci && npm run build
