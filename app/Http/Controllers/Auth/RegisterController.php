@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enums\RoleEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Interfaces\Services\UserServiceInterface;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
 
 class RegisterController extends Controller
 {
@@ -19,10 +19,13 @@ class RegisterController extends Controller
 
     public function register(RegisterRequest $request)
     {
-        $user = $this->userService->createUser($request->validated());
+        $user = $this->userService->createUser(array_merge(
+            $request->validated(),
+            ['role' => RoleEnum::USER]
+        ));
 
         Auth::login($user);
 
-        return redirect()->route('welcome');
+        return redirect('/');
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Enums\RoleEnum;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
@@ -60,53 +61,17 @@ class RegisterTest extends TestCase
 
     public function test_registration_persists_user_and_stores_hashed_password(): void
     {
-        // The registration has Bug #2 (wrong route name), so it throws an
-        // exception after creating the user. We catch it to still assert DB state.
-        try {
-            $this->withoutExceptionHandling()
-                ->post('/register', $this->validPayload());
-        } catch (\Throwable) {
-            // Expected: Bug #2 causes RouteNotFoundException after user creation.
-        }
+        $this->post('/register', $this->validPayload())
+            ->assertRedirect('/');
 
-        $this->assertDatabaseHas('users', ['email' => 'jane@example.com']);
+        $this->assertDatabaseHas('users', ['email' => 'jane@example.com', 'role' => RoleEnum::USER]);
 
         $user = User::where('email', 'jane@example.com')->first();
         $this->assertTrue(Hash::check('secret1234', $user->password));
         $this->assertNotEquals('secret1234', $user->password);
+        $this->assertEquals(RoleEnum::USER, $user->role);
     }
 
-    /**
-     * The controller calls Auth::login($user) before the redirect, so even
-     * though the redirect blows up due to Bug #2, the user is authenticated.
-     *
-     * @bug RegisterController redirects to route('welcome') but the route is
-     *      named 'landing'. Fix: change redirect()->route('welcome') to
-     *      redirect()->route('landing').
-     */
-    public function test_registration_logs_user_in_before_redirect_bug_occurs(): void
-    {
-        try {
-            $this->withoutExceptionHandling()
-                ->post('/register', $this->validPayload());
-        } catch (\Throwable) {
-            // Expected: RouteNotFoundException thrown after Auth::login().
-        }
-
-        $this->assertAuthenticated();
-    }
-
-    /**
-     * @bug RegisterController::register() calls redirect()->route('welcome'),
-     *      but no route named 'welcome' exists (it is named 'landing').
-     *      The global exception handler returns 500 for this unhandled exception.
-     *      Fix: change to redirect()->route('landing').
-     */
-    public function test_registration_fails_with_route_not_found_due_to_bug(): void
-    {
-        $this->post('/register', $this->validPayload())
-            ->assertStatus(500);
-    }
 
     // -------------------------------------------------------------------------
     // Validation — FormRequest level

@@ -57,7 +57,7 @@ class LoginTest extends TestCase
         $user = User::factory()->create();
 
         $this->post('/login', ['email' => $user->email, 'password' => 'password'])
-            ->assertRedirectToRoute('home');
+            ->assertRedirect('/');
 
         $this->assertAuthenticated();
     }
