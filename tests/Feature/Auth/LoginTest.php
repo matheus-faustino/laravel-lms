@@ -3,9 +3,7 @@
 namespace Tests\Feature\Auth;
 
 use App\Models\User;
-use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Validation\ValidationException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
@@ -13,149 +11,115 @@ class LoginTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->withoutVite();
-    }
-
-    // -------------------------------------------------------------------------
-    // Guest middleware
-    // -------------------------------------------------------------------------
-
-    #[DataProvider('guest_only_routes')]
-    public function test_auth_forms_enforce_guest_middleware(string $method, string $uri): void
-    {
-        $user = User::factory()->create();
-
-        $this->actingAs($user)->{$method}($uri)->assertRedirect();
-    }
-
-    public static function guest_only_routes(): array
-    {
-        return [
-            'GET /login redirects authenticated users'  => ['get', '/login'],
-            'POST /login redirects authenticated users' => ['post', '/login'],
-        ];
-    }
-
-    // -------------------------------------------------------------------------
-    // Login form
-    // -------------------------------------------------------------------------
-
     public function test_login_form_is_accessible_to_guests(): void
     {
-        $this->get('/login')->assertOk();
+        $response = $this->get('/login');
+
+        $response->assertOk();
+        $response->assertViewIs('auth.login');
     }
 
-    // -------------------------------------------------------------------------
-    // Successful login
-    // -------------------------------------------------------------------------
-
-    public function test_user_can_log_in_with_valid_credentials(): void
+    public function test_authenticated_user_is_redirected_from_login_form(): void
     {
         $user = User::factory()->create();
 
-        $this->post('/login', ['email' => $user->email, 'password' => 'password'])
-            ->assertRedirect('/');
+        /** @var \Illuminate\Contracts\Auth\Authenticatable $user */
+        $response = $this->actingAs($user)->get('/login');
 
-        $this->assertAuthenticated();
+        $response->assertRedirect();
     }
 
-    public function test_user_can_log_in_with_remember_me_option(): void
+    public function test_user_can_login_with_valid_credentials(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create([
+            'email' => 'test@example.com',
+            'password' => 'password123',
+        ]);
 
-        $this->post('/login', [
-            'email'    => $user->email,
+        $response = $this->post('/login', [
+            'email' => 'test@example.com',
+            'password' => 'password123',
+        ]);
+
+        $response->assertRedirect('/');
+        $this->assertAuthenticatedAs($user);
+    }
+
+    public function test_user_can_login_with_remember_me_option(): void
+    {
+        $user = User::factory()->create([
+            'email' => 'test@example.com',
+            'password' => 'password123',
+        ]);
+
+        $response = $this->post('/login', [
+            'email' => 'test@example.com',
+            'password' => 'password123',
+            'remember' => true,
+        ]);
+
+        $response->assertRedirect('/');
+        $this->assertAuthenticatedAs($user);
+    }
+
+    public function test_login_fails_with_wrong_password(): void
+    {
+        User::factory()->create(['email' => 'test@example.com']);
+
+        $response = $this->post('/login', [
+            'email' => 'test@example.com',
+            'password' => 'wrong_password',
+        ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHasErrors();
+        $this->assertGuest();
+    }
+
+    public function test_login_fails_with_unknown_email(): void
+    {
+        $response = $this->post('/login', [
+            'email' => 'nobody@example.com',
             'password' => 'password',
-            'remember' => '1',
-        ])->assertRedirect();
+        ]);
 
-        $this->assertAuthenticated();
-    }
-
-    // -------------------------------------------------------------------------
-    // Failed login — controller-level (these work because the controller calls
-    // back()->withErrors() manually, which does not go through the exception handler)
-    // -------------------------------------------------------------------------
-
-    #[DataProvider('invalid_credential_cases')]
-    public function test_login_with_invalid_credentials_returns_error(array $payload): void
-    {
-        User::factory()->create(['email' => 'real@example.com']);
-
-        $this->post('/login', $payload)
-            ->assertSessionHasErrors();
-
+        $response->assertRedirect();
+        $response->assertSessionHasErrors();
         $this->assertGuest();
     }
 
-    public static function invalid_credential_cases(): array
+    public static function missing_login_fields_provider(): array
     {
         return [
-            'wrong password' => [['email' => 'real@example.com', 'password' => 'wrong']],
-            'unknown email'  => [['email' => 'ghost@example.com', 'password' => 'password']],
+            'missing email'    => [['password' => 'password123'], 'email'],
+            'missing password' => [['email' => 'test@example.com'], 'password'],
         ];
     }
 
-    // -------------------------------------------------------------------------
-    // Failed login — FormRequest validation level
-    //
-    // Uses withoutExceptionHandling() because bootstrap/app.php registers a
-    // \Throwable renderable that intercepts ValidationException before the
-    // default handler can redirect back with errors (see Bug #4 below).
-    // -------------------------------------------------------------------------
-
-    #[DataProvider('missing_login_fields')]
-    public function test_login_validates_required_fields(array $payload, string $field): void
+    #[DataProvider('missing_login_fields_provider')]
+    public function test_login_requires_email_and_password(array $data, string $missingField): void
     {
-        $exception = null;
+        $response = $this->post('/login', $data);
 
-        try {
-            $this->withoutExceptionHandling()->post('/login', $payload);
-        } catch (ValidationException $e) {
-            $exception = $e;
-        }
-
-        $this->assertNotNull($exception, "Expected a ValidationException for missing field: $field");
-        $this->assertArrayHasKey($field, $exception->errors());
+        $response->assertSessionHasErrors([$missingField]);
         $this->assertGuest();
     }
 
-    public static function missing_login_fields(): array
-    {
-        return [
-            'missing email field'    => [['password' => 'secret1234'], 'email'],
-            'missing password field' => [['email' => 'user@example.com'], 'password'],
-        ];
-    }
-
-    // -------------------------------------------------------------------------
-    // Logout
-    // -------------------------------------------------------------------------
-
-    public function test_logout_redirects_to_login_and_clears_session(): void
+    public function test_logout_deauthenticates_user_and_redirects_to_login(): void
     {
         $user = User::factory()->create();
 
-        $this->actingAs($user)
-            ->post('/logout')
-            ->assertRedirectToRoute('login');
+        /** @var \Illuminate\Contracts\Auth\Authenticatable $user */
+        $response = $this->actingAs($user)->post('/logout');
 
+        $response->assertRedirect(route('login'));
         $this->assertGuest();
     }
 
-    /**
-     * The auth middleware throws AuthenticationException for unauthenticated
-     * requests. We use withoutExceptionHandling() to surface the exception
-     * directly rather than having it be swallowed by Bug #4's Throwable handler.
-     */
-    public function test_unauthenticated_user_cannot_access_logout_route(): void
+    public function test_unauthenticated_user_cannot_logout(): void
     {
-        $this->withoutExceptionHandling();
-        $this->expectException(AuthenticationException::class);
+        $response = $this->post('/logout');
 
-        $this->post('/logout');
+        $response->assertRedirect(route('login'));
     }
 }

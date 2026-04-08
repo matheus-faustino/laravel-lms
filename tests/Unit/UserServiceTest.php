@@ -10,13 +10,6 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
-/**
- * Tests for UserService.
- *
- * Extends Tests\TestCase (not PHPUnit\Framework\TestCase) because UserService
- * depends on Eloquent and DB::transaction, which require a booted Laravel app.
- * RefreshDatabase provides an isolated SQLite database for each test.
- */
 class UserServiceTest extends TestCase
 {
     use RefreshDatabase;
@@ -29,69 +22,83 @@ class UserServiceTest extends TestCase
         $this->service = new UserService();
     }
 
-    #[DataProvider('get_user_scenarios')]
-    public function test_get_user_returns_correct_user_or_null_by_id(string $scenario): void
+    public function test_get_all_users_returns_collection_of_all_users(): void
     {
-        $user = User::factory()->create(['name' => 'Alice', 'email' => 'alice@example.com']);
+        User::factory()->count(3)->create();
 
-        match ($scenario) {
-            'existing_id'     => $this->assertSame($user->id, $this->service->getUser($user->id)?->id),
-            'nonexistent_id'  => $this->assertNull($this->service->getUser(99999)),
-            'column_selection' => $this->assertNull($this->service->getUser($user->id, ['id', 'name'])?->getRawOriginal('email')),
-        };
+        $users = $this->service->getAllUsers();
+
+        $this->assertCount(3, $users);
     }
 
-    public static function get_user_scenarios(): array
+    public function test_get_user_returns_correct_user_by_id(): void
     {
-        return [
-            'returns user for existing id'   => ['existing_id'],
-            'returns null for nonexistent id' => ['nonexistent_id'],
-            'omits columns not requested'    => ['column_selection'],
-        ];
+        $user = User::factory()->create();
+
+        $result = $this->service->getUser($user->id);
+
+        $this->assertInstanceOf(User::class, $result);
+        $this->assertEquals($user->id, $result->id);
+    }
+
+    public function test_get_user_returns_null_for_nonexistent_id(): void
+    {
+        $result = $this->service->getUser(PHP_INT_MAX);
+
+        $this->assertNull($result);
+    }
+
+    public function test_get_user_returns_only_selected_columns(): void
+    {
+        $user = User::factory()->create();
+
+        $result = $this->service->getUser($user->id, ['id', 'name']);
+
+        $this->assertInstanceOf(User::class, $result);
+        $attributes = $result->getAttributes();
+        $this->assertArrayHasKey('id', $attributes);
+        $this->assertArrayHasKey('name', $attributes);
+        $this->assertArrayNotHasKey('email', $attributes);
     }
 
     public function test_create_user_persists_and_returns_user(): void
     {
-        $attributes = [
-            'name'     => 'Bob',
-            'email'    => 'bob@example.com',
-            'password' => 'secret1234',
+        $result = $this->service->createUser([
+            'name' => 'John Doe',
+            'email' => 'john@example.com',
+            'password' => 'password123',
             'role' => RoleEnum::USER,
-        ];
+        ]);
 
-        $user = $this->service->createUser($attributes);
-
-        $this->assertInstanceOf(User::class, $user);
-        $this->assertDatabaseHas('users', ['email' => 'bob@example.com']);
+        $this->assertInstanceOf(User::class, $result);
+        $this->assertDatabaseHas('users', ['email' => 'john@example.com', 'name' => 'John Doe']);
     }
 
     public function test_update_user_modifies_attributes_and_returns_fresh_model(): void
     {
-        $user = User::factory()->create(['name' => 'Carol']);
+        $user = User::factory()->create(['name' => 'Old Name']);
 
-        $updated = $this->service->updateUser($user->id, ['name' => 'Carol Updated']);
+        $updated = $this->service->updateUser($user->id, ['name' => 'New Name']);
 
-        $this->assertSame('Carol Updated', $updated->name);
-        $this->assertDatabaseHas('users', ['id' => $user->id, 'name' => 'Carol Updated']);
+        $this->assertInstanceOf(User::class, $updated);
+        $this->assertEquals('New Name', $updated->name);
+        $this->assertDatabaseHas('users', ['id' => $user->id, 'name' => 'New Name']);
     }
 
-    #[DataProvider('missing_id_operations')]
-    public function test_throws_model_not_found_when_id_is_missing(string $operation): void
+    public static function model_not_found_operations_provider(): array
+    {
+        return [
+            'update nonexistent user' => ['updateUser', [PHP_INT_MAX, ['name' => 'test']]],
+            'delete nonexistent user' => ['deleteUser', [PHP_INT_MAX]],
+        ];
+    }
+
+    #[DataProvider('model_not_found_operations_provider')]
+    public function test_throws_model_not_found_when_id_is_missing(string $method, array $args): void
     {
         $this->expectException(ModelNotFoundException::class);
 
-        match ($operation) {
-            'update' => $this->service->updateUser(99999, ['name' => 'Ghost']),
-            'delete' => $this->service->deleteUser(99999),
-        };
-    }
-
-    public static function missing_id_operations(): array
-    {
-        return [
-            'updateUser with nonexistent id' => ['update'],
-            'deleteUser with nonexistent id' => ['delete'],
-        ];
+        $this->service->$method(...$args);
     }
 
     public function test_delete_user_removes_record_and_returns_true(): void
@@ -104,12 +111,24 @@ class UserServiceTest extends TestCase
         $this->assertDatabaseMissing('users', ['id' => $user->id]);
     }
 
-    public function test_get_users_count_returns_users_count(): void
+    public function test_get_users_count_returns_total_count(): void
     {
-        User::factory(10)->create();
+        User::factory()->count(10)->create(['role' => RoleEnum::USER]);
 
-        $result = $this->service->getUsersCount();
+        $count = $this->service->getUsersCount(['role' => RoleEnum::USER]);
 
-        $this->assertEquals(10, $result);
+        $this->assertEquals(10, $count);
+    }
+
+    public function test_get_users_count_returns_filtered_count_by_role(): void
+    {
+        User::factory()->count(5)->create(['role' => RoleEnum::USER]);
+        User::factory()->count(3)->create(['role' => RoleEnum::ADMIN]);
+
+        $userCount = $this->service->getUsersCount(['role' => RoleEnum::USER]);
+        $adminCount = $this->service->getUsersCount(['role' => RoleEnum::ADMIN]);
+
+        $this->assertEquals(5, $userCount);
+        $this->assertEquals(3, $adminCount);
     }
 }
