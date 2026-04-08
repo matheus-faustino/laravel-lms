@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', config('app.name')) — {{ config('app.name') }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body class="min-h-screen bg-gray-50">
 
@@ -26,7 +27,9 @@
         </x-sidebar>
 
         <div class="flex flex-1 flex-col">
+            <x-navbar />
             <main class="flex-1 p-6">
+                <h1 class="mb-6">@yield('title')</h1>
                 @yield('content')
             </main>
         </div>
