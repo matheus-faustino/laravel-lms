@@ -39,6 +39,6 @@ Route::post('/forgot-password', [ResetPasswordController::class, 'sendPasswordRe
 Route::get('/reset-password/{token}', [ResetPasswordController::class, 'resetPasswordForm'])->name('password.reset');
 Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword']);
 
-Route::prefix('/admin')->as('admin.')->group(function () {
+Route::middleware('auth', 'role:admin')->prefix('/admin')->as('admin.')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
-})->middleware('role:admin');
+});
