@@ -4,6 +4,7 @@ namespace App\Interfaces\Services;
 
 use App\Enums\RoleEnum;
 use App\Models\User;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 
 interface UserServiceInterface
@@ -53,8 +54,16 @@ interface UserServiceInterface
     /**
      * Get users count
      * 
-     * @param RoleEnum $role The user role
+     * @param array $criteria
      * @return int
      */
     public function getUsersCount(array $criteria = []): int;
+
+    /**
+     * Get paginated users based on given criteria
+     * 
+     * @param array $criteria
+     * @return LengthAwarePaginator
+     */
+    public function getPaginatedUsers(?int $perPage = 10, ?array $criteria = [], ?array $colums = ['*']): LengthAwarePaginator;
 }

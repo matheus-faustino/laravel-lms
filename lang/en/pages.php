@@ -77,4 +77,18 @@ return [
         'back_home'   => 'Back to home',
     ],
 
+    'admin' => [
+        'users' => [
+            'created' => [
+                'success' => 'User created successfully!',
+            ],
+            'updated' => [
+                'success' => 'User updated successfully!',
+            ],
+            'deleted' => [
+                'sucess' => 'User deleted successfully!',
+            ]
+        ]
+    ]
+
 ];

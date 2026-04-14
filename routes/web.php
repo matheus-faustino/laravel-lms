@@ -2,6 +2,7 @@
 
 use App\Enums\RoleEnum;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
@@ -41,4 +42,15 @@ Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword']
 
 Route::middleware('auth', 'role:admin')->prefix('/admin')->as('admin.')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
+
+    Route::controller(UserController::class)->prefix('/users')->as('users.')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/create', 'create')->name('create');
+        Route::post('/create', 'store')->name('store');
+        Route::prefix('{userId}')->group(function () {
+            Route::get('/edit', 'edit')->name('edit');
+            Route::put('/edit', 'update')->name('update');
+            Route::delete('/delete', 'delete')->name('delete');
+        });
+    });
 });

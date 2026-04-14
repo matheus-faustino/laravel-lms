@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', config('app.name')) — {{ config('app.name') }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -21,6 +22,14 @@
                             @if(request()->routeIs('admin.dashboard.index')) aria-current="page" @endif
                             >
                             <i class="bi bi-speedometer2 mr-2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.users.index') }}"
+                            class="{{ request()->routeIs('admin.users.*') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }} flex items-center rounded-lg px-3 py-2 text-sm transition-colors duration-150"
+                            @if(request()->routeIs('admin.users.*')) aria-current="page" @endif
+                            >
+                            <i class="bi bi-people mr-2"></i> Users
                         </a>
                     </li>
                 </ul>

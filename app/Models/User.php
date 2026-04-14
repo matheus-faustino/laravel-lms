@@ -9,7 +9,9 @@ use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -32,5 +34,21 @@ class User extends Authenticatable implements CanResetPassword
             'password' => 'hashed',
             'role' => RoleEnum::class,
         ];
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role->value == RoleEnum::ADMIN->value;
+    }
+
+    public function isUser(): bool
+    {
+        return $this->role->value == RoleEnum::USER->value;
+    }
+
+    #[Scope]
+    protected function users(Builder $query): void
+    {
+        $query->where('role', RoleEnum::USER->value);
     }
 }

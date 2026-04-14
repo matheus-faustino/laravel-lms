@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use App\Enums\RoleEnum;
 use App\Models\User;
 use App\Services\UserService;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -130,5 +131,19 @@ class UserServiceTest extends TestCase
 
         $this->assertEquals(5, $userCount);
         $this->assertEquals(3, $adminCount);
+    }
+
+    public function test_get_paginated_users_returns_paginated_users(): void
+    {
+        User::factory()->count(5)->create(['role' => RoleEnum::USER]);
+        User::factory()->count(3)->create(['role' => RoleEnum::ADMIN]);
+
+        $columns = ['id', 'name', 'email', 'created_at', 'updated_at'];
+
+        $paginatedUsers = $this->service->getPaginatedUsers(10, ['role' => RoleEnum::USER], $columns);
+
+        $this->assertInstanceOf(LengthAwarePaginator::class, $paginatedUsers);
+        $this->assertCount(5, $paginatedUsers->items());
+        $this->assertSame($columns, array_keys($paginatedUsers->items()[0]->getAttributes()));
     }
 }

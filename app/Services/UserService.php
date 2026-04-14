@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Interfaces\Services\UserServiceInterface;
 use App\Models\User;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -53,5 +54,11 @@ class UserService implements UserServiceInterface
     public function getUsersCount(array $criteria = []): int
     {
         return User::query()->where($criteria)->count();
+    }
+
+    /** @inheritDoc */
+    public function getPaginatedUsers(?int $perPage = 10, ?array $criteria = [], ?array $colums = ['*']): LengthAwarePaginator
+    {
+        return User::query()->where($criteria)->paginate($perPage, $colums);
     }
 }
