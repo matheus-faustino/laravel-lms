@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ __('pages.register.page_title') }}</title>
+    <title>{{ __('shared/auth.register_page_title') }}</title>
     <script>
         (function () {
             var t = localStorage.getItem('theme');
@@ -24,7 +24,7 @@
             onclick="(function(){var h=document.documentElement,d=h.classList.toggle('dark');localStorage.setItem('theme',d?'dark':'light');})()"
             type="button"
             class="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-sky-500 shadow-sm"
-            aria-label="Toggle dark mode"
+            aria-label="{{ __('shared/ui.toggle_dark_mode') }}"
         >
             <i class="bi bi-sun text-base dark:hidden" aria-hidden="true"></i>
             <i class="bi bi-moon text-base hidden dark:block" aria-hidden="true"></i>
@@ -47,13 +47,13 @@
                 <span class="text-base font-semibold text-white">{{ config('app.name') }}</span>
             </div>
             <div class="relative z-10">
-                <p class="text-3xl font-bold text-white leading-snug">Create your account</p>
+                <p class="text-3xl font-bold text-white leading-snug">{{ __('shared/auth.register_welcome_heading') }}</p>
                 <p class="mt-3 text-sky-200 text-sm leading-relaxed max-w-xs">
-                    Join the platform and get full access to the control panel.
+                    {{ __('shared/auth.register_welcome_description') }}
                 </p>
                 <div class="mt-8 flex items-center gap-3">
                     <div class="h-px flex-1 bg-white/20"></div>
-                    <span class="text-xs text-sky-300">Secure platform</span>
+                    <span class="text-xs text-sky-300">{{ __('shared/auth.secure_platform') }}</span>
                     <div class="h-px flex-1 bg-white/20"></div>
                 </div>
             </div>
@@ -72,8 +72,8 @@
 
             <div class="w-full max-w-sm">
                 <div class="mb-8">
-                    <h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100">{{ __('pages.register.heading') }}</h1>
-                    <p class="mt-1.5 text-sm text-slate-500 dark:text-slate-400">{{ __('pages.register.subtitle') }}</p>
+                    <h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100">{{ __('shared/auth.register_heading') }}</h1>
+                    <p class="mt-1.5 text-sm text-slate-500 dark:text-slate-400">{{ __('shared/auth.register_subtitle') }}</p>
                 </div>
 
                 @if ($errors->any())
@@ -90,46 +90,46 @@
                     @csrf
 
                     <div>
-                        <label for="name" class="form-label">{{ __('pages.register.name_label') }}</label>
+                        <label for="name" class="form-label">{{ __('shared/ui.name_label') }}</label>
                         <input id="name" type="text" name="name" value="{{ old('name') }}"
                             required autofocus autocomplete="name"
-                            placeholder="{{ __('pages.register.name_placeholder') }}"
+                            placeholder="{{ __('shared/auth.register_name_placeholder') }}"
                             class="form-input @error('name') form-input-error @enderror">
                     </div>
 
                     <div>
-                        <label for="email" class="form-label">{{ __('pages.register.email_label') }}</label>
+                        <label for="email" class="form-label">{{ __('shared/ui.email_label') }}</label>
                         <input id="email" type="email" name="email" value="{{ old('email') }}"
                             required autocomplete="email"
-                            placeholder="{{ __('pages.register.email_placeholder') }}"
+                            placeholder="{{ __('shared/auth.register_email_placeholder') }}"
                             class="form-input @error('email') form-input-error @enderror">
                     </div>
 
                     <div>
-                        <label for="password" class="form-label">{{ __('pages.register.password_label') }}</label>
+                        <label for="password" class="form-label">{{ __('shared/ui.password_label') }}</label>
                         <input id="password" type="password" name="password"
                             required autocomplete="new-password"
-                            placeholder="{{ __('pages.register.password_placeholder') }}"
+                            placeholder="{{ __('shared/ui.password_placeholder') }}"
                             class="form-input @error('password') form-input-error @enderror">
                     </div>
 
                     <div>
-                        <label for="password_confirmation" class="form-label">{{ __('pages.register.confirm_password_label') }}</label>
+                        <label for="password_confirmation" class="form-label">{{ __('shared/ui.confirm_password_label') }}</label>
                         <input id="password_confirmation" type="password" name="password_confirmation"
                             required autocomplete="new-password"
-                            placeholder="{{ __('pages.register.confirm_password_placeholder') }}"
+                            placeholder="{{ __('shared/ui.confirm_password_placeholder') }}"
                             class="form-input">
                     </div>
 
                     <button type="submit" class="btn-primary w-full justify-center">
-                        {{ __('pages.register.submit') }}
+                        {{ __('shared/auth.register_submit') }}
                     </button>
                 </form>
 
                 <p class="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
-                    {{ __('pages.register.have_account') }}
+                    {{ __('shared/auth.register_have_account') }}
                     <a href="{{ route('login') }}" class="font-medium text-sky-600 hover:text-sky-500 dark:text-sky-400 dark:hover:text-sky-300 transition-colors">
-                        {{ __('pages.register.login_link') }}
+                        {{ __('shared/auth.register_login_link') }}
                     </a>
                 </p>
             </div>

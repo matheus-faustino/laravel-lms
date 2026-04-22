@@ -18,7 +18,7 @@ Route::get('/', function () {
             break;
 
         case RoleEnum::USER->value:
-            abort(501, "Not implemented yet.");
+            abort(501, __('shared/errors.not_implemented'));
             break;
 
         default:

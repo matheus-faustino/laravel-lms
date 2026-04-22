@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Users')
+@section('title', __('admin/users.page_title'))
 
 @section('content')
 
@@ -14,7 +14,7 @@
 <div class="mb-4 flex items-center justify-between">
     <a href="{{ route('admin.users.create') }}" class="btn-primary">
         <i class="bi bi-person-plus" aria-hidden="true"></i>
-        New user
+        {{ __('admin/users.new_user_btn') }}
     </a>
 </div>
 
@@ -22,10 +22,10 @@
     <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-800">
         <thead>
             <tr class="bg-slate-50 dark:bg-slate-800/50">
-                <th scope="col" class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">User</th>
-                <th scope="col" class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Email</th>
-                <th scope="col" class="hidden px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 sm:table-cell">Created at</th>
-                <th scope="col" class="px-6 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Actions</th>
+                <th scope="col" class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">{{ __('admin/users.table_user_col') }}</th>
+                <th scope="col" class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">{{ __('shared/ui.email_label') }}</th>
+                <th scope="col" class="hidden px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 sm:table-cell">{{ __('admin/users.table_created_at_col') }}</th>
+                <th scope="col" class="px-6 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">{{ __('shared/ui.actions_label') }}</th>
             </tr>
         </thead>
         <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
@@ -35,7 +35,7 @@
                         deleting: false,
                         deleteUrl: '{{ route('admin.users.delete', $user->id) }}',
                         async confirmDelete() {
-                            if (!window.confirm('Delete user {{ addslashes($user->name) }}? This action cannot be undone.')) return;
+                            if (!window.confirm('{{ __('admin/users.delete_confirm', ['name' => addslashes($user->name)]) }}')) return;
                             this.deleting = true;
                             try {
                                 const response = await fetch(this.deleteUrl, {
@@ -49,11 +49,11 @@
                                     this.$el.remove();
                                 } else {
                                     const data = await response.json();
-                                    window.alert(data.message ?? 'An error has occurred.');
+                                    window.alert(data.message ?? '{{ __('shared/errors.generic_error') }}');
                                     this.deleting = false;
                                 }
                             } catch {
-                                window.alert('Network error. Try again.');
+                                window.alert('{{ __('shared/errors.network_error') }}');
                                 this.deleting = false;
                             }
                         }
@@ -75,11 +75,11 @@
                     <td class="px-6 py-4 text-right">
                         <div class="flex items-center justify-end gap-2">
                             <a href="{{ route('admin.users.edit', $user->id) }}" class="btn-edit">
-                                <i class="bi bi-pencil" aria-hidden="true"></i> Edit
+                                <i class="bi bi-pencil" aria-hidden="true"></i> {{ __('shared/ui.edit') }}
                             </a>
                             <button type="button" @click="confirmDelete()" :disabled="deleting" class="btn-danger">
                                 <i class="bi bi-trash" aria-hidden="true"></i>
-                                <span x-text="deleting ? 'Deleting…' : 'Delete'"></span>
+                                <span x-text="deleting ? '{{ __('shared/ui.deleting') }}' : '{{ __('shared/ui.delete') }}'"></span>
                             </button>
                         </div>
                     </td>
@@ -89,7 +89,7 @@
                     <td colspan="4" class="px-6 py-16 text-center">
                         <div class="flex flex-col items-center gap-2">
                             <i class="bi bi-people text-4xl text-slate-300 dark:text-slate-600" aria-hidden="true"></i>
-                            <p class="text-sm font-medium text-slate-400 dark:text-slate-500">No users found</p>
+                            <p class="text-sm font-medium text-slate-400 dark:text-slate-500">{{ __('admin/users.no_users_found') }}</p>
                         </div>
                     </td>
                 </tr>

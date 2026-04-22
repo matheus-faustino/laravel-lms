@@ -6,7 +6,7 @@
             onclick="(function(){var h=document.documentElement,d=h.classList.toggle('dark');localStorage.setItem('theme',d?'dark':'light');})()"
             type="button"
             class="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-sky-500"
-            aria-label="Toggle dark mode"
+            aria-label="{{ __('shared/ui.toggle_dark_mode') }}"
         >
             <i class="bi bi-sun text-base dark:hidden" aria-hidden="true"></i>
             <i class="bi bi-moon text-base hidden dark:block" aria-hidden="true"></i>
@@ -65,7 +65,7 @@
                                 <path fill-rule="evenodd" d="M3 4.25A2.25 2.25 0 0 1 5.25 2h5.5A2.25 2.25 0 0 1 13 4.25v2a.75.75 0 0 1-1.5 0v-2a.75.75 0 0 0-.75-.75h-5.5a.75.75 0 0 0-.75.75v11.5c0 .414.336.75.75.75h5.5a.75.75 0 0 0 .75-.75v-2a.75.75 0 0 1 1.5 0v2A2.25 2.25 0 0 1 10.75 18h-5.5A2.25 2.25 0 0 1 3 15.75V4.25Z" clip-rule="evenodd" />
                                 <path fill-rule="evenodd" d="M19 10a.75.75 0 0 0-.75-.75H8.704l1.048-1.068a.75.75 0 1 0-1.064-1.064l-2.25 2.25a.75.75 0 0 0 0 1.064l2.25 2.25a.75.75 0 1 0 1.064-1.064l-1.048-1.068h9.546A.75.75 0 0 0 19 10Z" clip-rule="evenodd" />
                             </svg>
-                            Logout
+                            {{ __('shared/ui.logout') }}
                         </button>
                     </form>
                 </div>

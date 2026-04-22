@@ -20,7 +20,7 @@
 
     <button @click="open = !open" type="button"
         class="fixed bottom-6 right-6 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-sky-600 text-white shadow-lg shadow-sky-500/30 md:hidden focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
-        :aria-label="open ? 'Hide menu' : 'Show menu'" :aria-expanded="open">
+        :aria-label="open ? '{{ __('shared/ui.hide_menu') }}' : '{{ __('shared/ui.show_menu') }}'" :aria-expanded="open">
         <svg x-show="!open" class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
             fill="currentColor" aria-hidden="true">
             <path fill-rule="evenodd"

@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Edit user')
+@section('title', __('admin/users.edit_title'))
 
 @section('content')
 <div class="max-w-lg">
@@ -12,10 +12,10 @@
             <div class="flex items-center gap-3 pt-2">
                 <button type="submit" class="btn-primary">
                     <i class="bi bi-floppy" aria-hidden="true"></i>
-                    Save changes
+                    {{ __('shared/ui.save_changes') }}
                 </button>
                 <a href="{{ route('admin.users.index') }}" class="btn-secondary">
-                    Cancel
+                    {{ __('shared/ui.cancel') }}
                 </a>
             </div>
         </form>

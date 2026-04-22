@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ __('pages.login.title') }}</title>
+    <title>{{ __('shared/auth.login_title') }}</title>
     <script>
         (function () {
             var t = localStorage.getItem('theme');
@@ -24,7 +24,7 @@
             onclick="(function(){var h=document.documentElement,d=h.classList.toggle('dark');localStorage.setItem('theme',d?'dark':'light');})()"
             type="button"
             class="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-sky-500 shadow-sm"
-            aria-label="Toggle dark mode"
+            aria-label="{{ __('shared/ui.toggle_dark_mode') }}"
         >
             <i class="bi bi-sun text-base dark:hidden" aria-hidden="true"></i>
             <i class="bi bi-moon text-base hidden dark:block" aria-hidden="true"></i>
@@ -47,13 +47,13 @@
                 <span class="text-base font-semibold text-white">{{ config('app.name') }}</span>
             </div>
             <div class="relative z-10">
-                <p class="text-3xl font-bold text-white leading-snug">Welcome back</p>
+                <p class="text-3xl font-bold text-white leading-snug">{{ __('shared/auth.login_welcome_heading') }}</p>
                 <p class="mt-3 text-sky-200 text-sm leading-relaxed max-w-xs">
-                    Access the panel to manage users, settings, and more.
+                    {{ __('shared/auth.login_welcome_description') }}
                 </p>
                 <div class="mt-8 flex items-center gap-3">
                     <div class="h-px flex-1 bg-white/20"></div>
-                    <span class="text-xs text-sky-300">Secure platform</span>
+                    <span class="text-xs text-sky-300">{{ __('shared/auth.secure_platform') }}</span>
                     <div class="h-px flex-1 bg-white/20"></div>
                 </div>
             </div>
@@ -72,8 +72,8 @@
 
             <div class="w-full max-w-sm">
                 <div class="mb-8">
-                    <h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100">{{ __('pages.login.title') }}</h1>
-                    <p class="mt-1.5 text-sm text-slate-500 dark:text-slate-400">{{ __('pages.login.subtitle') }}</p>
+                    <h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100">{{ __('shared/auth.login_title') }}</h1>
+                    <p class="mt-1.5 text-sm text-slate-500 dark:text-slate-400">{{ __('shared/auth.login_subtitle') }}</p>
                 </div>
 
                 @if ($errors->any())
@@ -90,18 +90,18 @@
                     @csrf
 
                     <div>
-                        <label for="email" class="form-label">{{ __('pages.login.email_label') }}</label>
+                        <label for="email" class="form-label">{{ __('shared/ui.email_label') }}</label>
                         <input id="email" type="email" name="email" value="{{ old('email') }}"
                             required autofocus autocomplete="email"
-                            placeholder="{{ __('pages.login.email_placeholder') }}"
+                            placeholder="{{ __('shared/auth.login_email_placeholder') }}"
                             class="form-input @error('email') form-input-error @enderror">
                     </div>
 
                     <div>
                         <div class="flex items-center justify-between mb-1.5">
-                            <label for="password" class="form-label !mb-0">{{ __('pages.login.password_label') }}</label>
+                            <label for="password" class="form-label !mb-0">{{ __('shared/ui.password_label') }}</label>
                             <a href="{{ route('password.request') }}" class="text-xs font-medium text-sky-600 hover:text-sky-500 dark:text-sky-400 dark:hover:text-sky-300 transition-colors">
-                                {{ __('pages.login.forgot_password') }}
+                                {{ __('shared/auth.login_forgot_password') }}
                             </a>
                         </div>
                         <input id="password" type="password" name="password"
@@ -114,19 +114,19 @@
                             {{ old('remember') ? 'checked' : '' }}
                             class="h-4 w-4 rounded border-slate-300 dark:border-slate-600 text-sky-600 focus:ring-sky-500 cursor-pointer">
                         <label for="remember" class="ml-2 text-sm text-slate-600 dark:text-slate-400 cursor-pointer select-none">
-                            {{ __('pages.login.remember_me') }}
+                            {{ __('shared/auth.login_remember_me') }}
                         </label>
                     </div>
 
                     <button type="submit" class="btn-primary w-full justify-center">
-                        {{ __('pages.login.submit') }}
+                        {{ __('shared/auth.login_submit') }}
                     </button>
                 </form>
 
                 <p class="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
-                    {{ __('pages.login.no_account') }}
+                    {{ __('shared/auth.login_no_account') }}
                     <a href="{{ route('register') }}" class="font-medium text-sky-600 hover:text-sky-500 dark:text-sky-400 dark:hover:text-sky-300 transition-colors">
-                        {{ __('pages.login.register_link') }}
+                        {{ __('shared/auth.login_register_link') }}
                     </a>
                 </p>
             </div>

@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Create user')
+@section('title', __('admin/users.create_title'))
 
 @section('content')
 <div class="max-w-lg">
@@ -11,10 +11,10 @@
             <div class="flex items-center gap-3 pt-2">
                 <button type="submit" class="btn-primary">
                     <i class="bi bi-person-plus" aria-hidden="true"></i>
-                    Create user
+                    {{ __('admin/users.create_btn') }}
                 </button>
                 <a href="{{ route('admin.users.index') }}" class="btn-secondary">
-                    Cancel
+                    {{ __('shared/ui.cancel') }}
                 </a>
             </div>
         </form>

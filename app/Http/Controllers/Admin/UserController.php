@@ -29,7 +29,7 @@ class UserController extends Controller
     {
         $this->userService->createUser(array_merge($request->validated(), ['role' => RoleEnum::USER]));
 
-        return to_route('admin.users.index')->with('success', __('pages.admin.users.created.success'));
+        return to_route('admin.users.index')->with('success', __('admin/users.created_success'));
     }
 
     public function edit(int $userId)
@@ -43,13 +43,13 @@ class UserController extends Controller
     {
         $this->userService->updateUser($userId, $request->validated());
 
-        return to_route('admin.users.index')->with('success', __('pages.admin.users.updated.success'));
+        return to_route('admin.users.index')->with('success', __('admin/users.updated_success'));
     }
 
     public function delete(int $userId)
     {
         $this->userService->deleteUser($userId);
 
-        return response()->json(['message' => __('pages.admin.users.deleted.success')]);
+        return response()->json(['message' => __('admin/users.deleted_success')]);
     }
 }
