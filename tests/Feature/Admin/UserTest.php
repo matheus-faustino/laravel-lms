@@ -104,7 +104,7 @@ class UserTest extends TestCase
 
         $this->actingAs($admin)->post(route('admin.users.create'), $userData)
             ->assertRedirect(route('admin.users.index'))
-            ->assertSessionHas('success', __('pages.admin.users.created.success'));
+            ->assertSessionHas('success', __('admin/users.created_success'));
 
         $this->assertDatabaseHas('users', [
             'name' => $userData['name'],
@@ -193,7 +193,7 @@ class UserTest extends TestCase
         $this->actingAs($admin)
             ->put(route('admin.users.update', ['userId' => $user->id]), $userData)
             ->assertRedirect(route('admin.users.index'))
-            ->assertSessionHas('success', __('pages.admin.users.updated.success'));
+            ->assertSessionHas('success', __('admin/users.updated_success'));
 
         $this->assertDatabaseMissing('users', [
             'name' => $user->name,
@@ -301,7 +301,7 @@ class UserTest extends TestCase
 
         $this->actingAs($admin)->delete(route('admin.users.delete', ['userId' => $user->id]))
             ->assertOk()
-            ->assertJsonPath('message', __('pages.admin.users.deleted.success'));
+            ->assertJsonPath('message', __('admin/users.deleted_success'));
 
         $this->assertDatabaseMissing('users', [
             'id' => $user->id,
