@@ -6,44 +6,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', config('app.name')) — {{ config('app.name') }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <script>
+        (function () {
+            var t = localStorage.getItem('theme');
+            if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            }
+        })();
+    </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 
-<body class="min-h-screen bg-gray-50">
+<body class="min-h-screen bg-slate-100 dark:bg-slate-950 transition-colors duration-200">
 
     <div class="flex min-h-screen">
         <x-sidebar>
-            <nav class="flex-1 px-4 py-4" aria-label="Menu principal">
+            <nav class="flex-1 px-3 py-4" aria-label="Main menu">
+                <p class="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-slate-500">Menu</p>
                 <ul class="space-y-1" role="list">
                     <li>
                         <a href="{{ route('admin.dashboard.index') }}"
-                            class="{{ request()->routeIs('admin.dashboard.index') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }} flex items-center rounded-lg px-3 py-2 text-sm transition-colors duration-150"
-                            @if(request()->routeIs('admin.dashboard.index')) aria-current="page" @endif
-                            >
-                            <i class="bi bi-speedometer2 mr-2"></i> Dashboard
+                            class="{{ request()->routeIs('admin.dashboard.index') ? 'bg-sky-500/15 text-sky-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200' }} flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-150"
+                            @if(request()->routeIs('admin.dashboard.index')) aria-current="page" @endif>
+                            <i class="bi bi-speedometer2 text-base w-4 text-center"></i>
+                            Dashboard
                         </a>
                     </li>
                     <li>
                         <a href="{{ route('admin.users.index') }}"
-                            class="{{ request()->routeIs('admin.users.*') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }} flex items-center rounded-lg px-3 py-2 text-sm transition-colors duration-150"
-                            @if(request()->routeIs('admin.users.*')) aria-current="page" @endif
-                            >
-                            <i class="bi bi-people mr-2"></i> Users
+                            class="{{ request()->routeIs('admin.users.*') ? 'bg-sky-500/15 text-sky-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200' }} flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-150"
+                            @if(request()->routeIs('admin.users.*')) aria-current="page" @endif>
+                            <i class="bi bi-people text-base w-4 text-center"></i>
+                            Users
                         </a>
                     </li>
                 </ul>
             </nav>
         </x-sidebar>
 
-        <div class="flex flex-1 flex-col">
+        <div class="flex flex-1 flex-col min-w-0">
             <x-navbar />
-            <main class="flex-1 p-6">
-                <h1 class="mb-6">@yield('title')</h1>
+            <main class="flex-1 p-6 lg:p-8">
+                <h1 class="text-xl font-bold text-slate-900 dark:text-slate-100 mb-6">@yield('title')</h1>
                 @yield('content')
             </main>
         </div>
-
     </div>
 
 </body>

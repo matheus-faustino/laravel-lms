@@ -4,127 +4,135 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ __('pages.register.page_title') }}</title>
+    <script>
+        (function () {
+            var t = localStorage.getItem('theme');
+            if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            }
+        })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+<body class="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-200">
 
-    <div class="w-full max-w-md">
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+    {{-- Dark mode toggle --}}
+    <div class="absolute top-4 right-4 z-10">
+        <button
+            onclick="(function(){var h=document.documentElement,d=h.classList.toggle('dark');localStorage.setItem('theme',d?'dark':'light');})()"
+            type="button"
+            class="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-sky-500 shadow-sm"
+            aria-label="Toggle dark mode"
+        >
+            <i class="bi bi-sun text-base dark:hidden" aria-hidden="true"></i>
+            <i class="bi bi-moon text-base hidden dark:block" aria-hidden="true"></i>
+        </button>
+    </div>
 
-            {{-- Header --}}
-            <div class="mb-8 text-center">
-                <h1 class="text-2xl font-semibold text-gray-900">{{ __('pages.register.heading') }}</h1>
-                <p class="mt-1 text-sm text-gray-500">{{ __('pages.register.subtitle') }}</p>
+    <div class="flex min-h-screen">
+
+        {{-- Left branding panel --}}
+        <div class="hidden lg:flex lg:w-[480px] xl:w-[560px] flex-col justify-between bg-gradient-to-br from-sky-600 via-sky-700 to-sky-900 p-12 relative overflow-hidden shrink-0">
+            <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+                <div class="absolute -top-32 -right-32 h-96 w-96 rounded-full bg-white/5"></div>
+                <div class="absolute -bottom-16 -left-16 h-72 w-72 rounded-full bg-white/5"></div>
+                <div class="absolute top-1/3 right-8 h-40 w-40 rounded-full bg-white/5"></div>
+            </div>
+            <div class="flex items-center gap-3 relative z-10">
+                <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm">
+                    <i class="bi bi-grid-fill text-white" aria-hidden="true"></i>
+                </div>
+                <span class="text-base font-semibold text-white">{{ config('app.name') }}</span>
+            </div>
+            <div class="relative z-10">
+                <p class="text-3xl font-bold text-white leading-snug">Create your account</p>
+                <p class="mt-3 text-sky-200 text-sm leading-relaxed max-w-xs">
+                    Join the platform and get full access to the control panel.
+                </p>
+                <div class="mt-8 flex items-center gap-3">
+                    <div class="h-px flex-1 bg-white/20"></div>
+                    <span class="text-xs text-sky-300">Secure platform</span>
+                    <div class="h-px flex-1 bg-white/20"></div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Right form panel --}}
+        <div class="flex flex-1 flex-col items-center justify-center px-6 py-16">
+
+            {{-- Mobile logo --}}
+            <div class="flex items-center gap-2 mb-10 lg:hidden">
+                <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-600">
+                    <i class="bi bi-grid-fill text-white text-sm" aria-hidden="true"></i>
+                </div>
+                <span class="text-sm font-semibold text-slate-900 dark:text-slate-100">{{ config('app.name') }}</span>
             </div>
 
-            {{-- Errors --}}
-            @if ($errors->any())
-                <div class="mb-6 rounded-lg bg-red-50 border border-red-200 px-4 py-3">
-                    <ul class="list-disc list-inside space-y-1">
-                        @foreach ($errors->all() as $error)
-                            <li class="text-sm text-red-600">{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
-            {{-- Form --}}
-            <form method="POST" action="{{ route('register.submit') }}" class="space-y-5">
-                @csrf
-
-                {{-- Name --}}
-                <div>
-                    <label for="name" class="block text-sm font-medium text-gray-700 mb-1">
-                        {{ __('pages.register.name_label') }}
-                    </label>
-                    <input
-                        id="name"
-                        type="text"
-                        name="name"
-                        value="{{ old('name') }}"
-                        required
-                        autofocus
-                        autocomplete="name"
-                        placeholder="{{ __('pages.register.name_placeholder') }}"
-                        class="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 placeholder-gray-400 shadow-xs
-                               focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
-                               @error('name') border-red-400 focus:ring-red-400 focus:border-red-400 @enderror"
-                    >
+            <div class="w-full max-w-sm">
+                <div class="mb-8">
+                    <h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100">{{ __('pages.register.heading') }}</h1>
+                    <p class="mt-1.5 text-sm text-slate-500 dark:text-slate-400">{{ __('pages.register.subtitle') }}</p>
                 </div>
 
-                {{-- Email --}}
-                <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
-                        {{ __('pages.register.email_label') }}
-                    </label>
-                    <input
-                        id="email"
-                        type="email"
-                        name="email"
-                        value="{{ old('email') }}"
-                        required
-                        autocomplete="email"
-                        placeholder="{{ __('pages.register.email_placeholder') }}"
-                        class="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 placeholder-gray-400 shadow-xs
-                               focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
-                               @error('email') border-red-400 focus:ring-red-400 focus:border-red-400 @enderror"
-                    >
-                </div>
+                @if ($errors->any())
+                    <div class="alert-error mb-6">
+                        <ul class="list-disc list-inside space-y-1">
+                            @foreach ($errors->all() as $error)
+                                <li class="text-sm text-red-600 dark:text-red-400">{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
 
-                {{-- Password --}}
-                <div>
-                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
-                        {{ __('pages.register.password_label') }}
-                    </label>
-                    <input
-                        id="password"
-                        type="password"
-                        name="password"
-                        required
-                        autocomplete="new-password"
-                        placeholder="{{ __('pages.register.password_placeholder') }}"
-                        class="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 placeholder-gray-400 shadow-xs
-                               focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
-                               @error('password') border-red-400 focus:ring-red-400 focus:border-red-400 @enderror"
-                    >
-                </div>
+                <form method="POST" action="{{ route('register.submit') }}" class="space-y-5">
+                    @csrf
 
-                {{-- Password Confirmation --}}
-                <div>
-                    <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-1">
-                        {{ __('pages.register.confirm_password_label') }}
-                    </label>
-                    <input
-                        id="password_confirmation"
-                        type="password"
-                        name="password_confirmation"
-                        required
-                        autocomplete="new-password"
-                        placeholder="{{ __('pages.register.confirm_password_placeholder') }}"
-                        class="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 placeholder-gray-400 shadow-xs
-                               focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                    >
-                </div>
+                    <div>
+                        <label for="name" class="form-label">{{ __('pages.register.name_label') }}</label>
+                        <input id="name" type="text" name="name" value="{{ old('name') }}"
+                            required autofocus autocomplete="name"
+                            placeholder="{{ __('pages.register.name_placeholder') }}"
+                            class="form-input @error('name') form-input-error @enderror">
+                    </div>
 
-                {{-- Submit --}}
-                <button
-                    type="submit"
-                    class="w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-xs
-                           hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2
-                           transition-colors duration-150 cursor-pointer"
-                >
-                    {{ __('pages.register.submit') }}
-                </button>
-            </form>
+                    <div>
+                        <label for="email" class="form-label">{{ __('pages.register.email_label') }}</label>
+                        <input id="email" type="email" name="email" value="{{ old('email') }}"
+                            required autocomplete="email"
+                            placeholder="{{ __('pages.register.email_placeholder') }}"
+                            class="form-input @error('email') form-input-error @enderror">
+                    </div>
 
-            {{-- Login link --}}
-            <p class="mt-6 text-center text-sm text-gray-500">
-                {{ __('pages.register.have_account') }}
-                <a href="{{ route('login') }}" class="font-medium text-indigo-600 hover:text-indigo-500">
-                    {{ __('pages.register.login_link') }}
-                </a>
-            </p>
+                    <div>
+                        <label for="password" class="form-label">{{ __('pages.register.password_label') }}</label>
+                        <input id="password" type="password" name="password"
+                            required autocomplete="new-password"
+                            placeholder="{{ __('pages.register.password_placeholder') }}"
+                            class="form-input @error('password') form-input-error @enderror">
+                    </div>
 
+                    <div>
+                        <label for="password_confirmation" class="form-label">{{ __('pages.register.confirm_password_label') }}</label>
+                        <input id="password_confirmation" type="password" name="password_confirmation"
+                            required autocomplete="new-password"
+                            placeholder="{{ __('pages.register.confirm_password_placeholder') }}"
+                            class="form-input">
+                    </div>
+
+                    <button type="submit" class="btn-primary w-full justify-center">
+                        {{ __('pages.register.submit') }}
+                    </button>
+                </form>
+
+                <p class="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
+                    {{ __('pages.register.have_account') }}
+                    <a href="{{ route('login') }}" class="font-medium text-sky-600 hover:text-sky-500 dark:text-sky-400 dark:hover:text-sky-300 transition-colors">
+                        {{ __('pages.register.login_link') }}
+                    </a>
+                </p>
+            </div>
         </div>
     </div>
 

@@ -4,102 +4,94 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ __('pages.reset_password.page_title') }}</title>
+    <script>
+        (function () {
+            var t = localStorage.getItem('theme');
+            if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            }
+        })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+<body class="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center px-4 transition-colors duration-200">
 
-    <div class="w-full max-w-md">
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+    {{-- Dark mode toggle --}}
+    <div class="absolute top-4 right-4">
+        <button
+            onclick="(function(){var h=document.documentElement,d=h.classList.toggle('dark');localStorage.setItem('theme',d?'dark':'light');})()"
+            type="button"
+            class="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-sky-500 shadow-sm"
+            aria-label="Toggle dark mode"
+        >
+            <i class="bi bi-sun text-base dark:hidden" aria-hidden="true"></i>
+            <i class="bi bi-moon text-base hidden dark:block" aria-hidden="true"></i>
+        </button>
+    </div>
 
-            {{-- Header --}}
-            <div class="mb-8 text-center">
-                <h1 class="text-2xl font-semibold text-gray-900">{{ __('pages.reset_password.heading') }}</h1>
-                <p class="mt-1 text-sm text-gray-500">{{ __('pages.reset_password.subtitle') }}</p>
+    <div class="w-full max-w-sm">
+
+        <div class="flex items-center justify-center gap-2.5 mb-8">
+            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-600 shadow-lg shadow-sky-500/30">
+                <i class="bi bi-grid-fill text-white" aria-hidden="true"></i>
+            </div>
+            <span class="text-base font-semibold text-slate-900 dark:text-slate-100">{{ config('app.name') }}</span>
+        </div>
+
+        <div class="card p-8">
+            <div class="mb-6 text-center">
+                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-100 dark:bg-sky-900/30 mx-auto mb-4">
+                    <i class="bi bi-shield-lock-fill text-sky-600 dark:text-sky-400 text-xl" aria-hidden="true"></i>
+                </div>
+                <h1 class="text-xl font-bold text-slate-900 dark:text-slate-100">{{ __('pages.reset_password.heading') }}</h1>
+                <p class="mt-1.5 text-sm text-slate-500 dark:text-slate-400">{{ __('pages.reset_password.subtitle') }}</p>
             </div>
 
-            {{-- Errors --}}
             @if ($errors->any())
-                <div class="mb-6 rounded-lg bg-red-50 border border-red-200 px-4 py-3">
+                <div class="alert-error mb-6">
                     <ul class="list-disc list-inside space-y-1">
                         @foreach ($errors->all() as $error)
-                            <li class="text-sm text-red-600">{{ $error }}</li>
+                            <li class="text-sm text-red-600 dark:text-red-400">{{ $error }}</li>
                         @endforeach
                     </ul>
                 </div>
             @endif
 
-            {{-- Form --}}
             <form method="POST" class="space-y-5">
                 @csrf
-
                 <input type="hidden" name="token" value="{{ $token }}">
 
-                {{-- Email --}}
                 <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
-                        {{ __('pages.reset_password.email_label') }}
-                    </label>
-                    <input
-                        id="email"
-                        type="email"
-                        name="email"
+                    <label for="email" class="form-label">{{ __('pages.reset_password.email_label') }}</label>
+                    <input id="email" type="email" name="email"
                         value="{{ old('email', request()->query('email')) }}"
-                        required
-                        autofocus
-                        autocomplete="email"
+                        required autofocus autocomplete="email"
                         placeholder="{{ __('pages.reset_password.email_placeholder') }}"
-                        class="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 placeholder-gray-400 shadow-xs
-                               focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
-                               @error('email') border-red-400 focus:ring-red-400 focus:border-red-400 @enderror"
-                    >
+                        class="form-input @error('email') form-input-error @enderror">
                 </div>
 
-                {{-- New Password --}}
                 <div>
-                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
-                        {{ __('pages.reset_password.new_password_label') }}
-                    </label>
-                    <input
-                        id="password"
-                        type="password"
-                        name="password"
-                        required
-                        autocomplete="new-password"
+                    <label for="password" class="form-label">{{ __('pages.reset_password.new_password_label') }}</label>
+                    <input id="password" type="password" name="password"
+                        required autocomplete="new-password"
                         placeholder="{{ __('pages.reset_password.new_password_placeholder') }}"
-                        class="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 placeholder-gray-400 shadow-xs
-                               focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
-                               @error('password') border-red-400 focus:ring-red-400 focus:border-red-400 @enderror"
-                    >
+                        class="form-input @error('password') form-input-error @enderror">
                 </div>
 
-                {{-- Confirm Password --}}
                 <div>
-                    <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-1">
-                        {{ __('pages.reset_password.confirm_password_label') }}
-                    </label>
-                    <input
-                        id="password_confirmation"
-                        type="password"
-                        name="password_confirmation"
-                        required
-                        autocomplete="new-password"
+                    <label for="password_confirmation" class="form-label">{{ __('pages.reset_password.confirm_password_label') }}</label>
+                    <input id="password_confirmation" type="password" name="password_confirmation"
+                        required autocomplete="new-password"
                         placeholder="{{ __('pages.reset_password.confirm_password_placeholder') }}"
-                        class="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 placeholder-gray-400 shadow-xs
-                               focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                    >
+                        class="form-input">
                 </div>
 
-                {{-- Submit --}}
-                <button
-                    type="submit"
-                    class="w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-xs
-                           hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2
-                           transition-colors duration-150 cursor-pointer"
-                >
+                <button type="submit" class="btn-primary w-full justify-center">
                     {{ __('pages.reset_password.submit') }}
                 </button>
             </form>
-
         </div>
     </div>
 

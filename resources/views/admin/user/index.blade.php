@@ -4,37 +4,34 @@
 
 @section('content')
 
-{{-- Success flash --}}
 @if (session('success'))
-    <div class="mb-6 rounded-lg bg-green-50 border border-green-200 px-4 py-3">
-        <p class="text-sm text-green-700">{{ session('success') }}</p>
+    <div class="alert-success mb-6">
+        <i class="bi bi-check-circle-fill text-green-500 dark:text-green-400 shrink-0" aria-hidden="true"></i>
+        <p class="text-sm text-green-700 dark:text-green-300">{{ session('success') }}</p>
     </div>
 @endif
 
-{{-- Action bar --}}
-<div class="mb-4 flex items-center justify-end">
-    <a href="{{ route('admin.users.create') }}"
-        class="flex items-center gap-1.5 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-xs
-               hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2
-               transition-colors duration-150">
-        <i class="bi bi-person-plus"></i> New User
+<div class="mb-4 flex items-center justify-between">
+    <a href="{{ route('admin.users.create') }}" class="btn-primary">
+        <i class="bi bi-person-plus" aria-hidden="true"></i>
+        New user
     </a>
 </div>
 
-{{-- Table --}}
-<div class="rounded-xl border border-gray-200 bg-white overflow-hidden">
-    <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
-            <tr>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
-                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+<div class="card overflow-hidden">
+    <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-800">
+        <thead>
+            <tr class="bg-slate-50 dark:bg-slate-800/50">
+                <th scope="col" class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">User</th>
+                <th scope="col" class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Email</th>
+                <th scope="col" class="hidden px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 sm:table-cell">Created at</th>
+                <th scope="col" class="px-6 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Actions</th>
             </tr>
         </thead>
-        <tbody class="bg-white divide-y divide-gray-100">
+        <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
             @forelse ($users as $user)
-                <tr x-data="{
+                <tr
+                    x-data="{
                         deleting: false,
                         deleteUrl: '{{ route('admin.users.delete', $user->id) }}',
                         async confirmDelete() {
@@ -52,30 +49,36 @@
                                     this.$el.remove();
                                 } else {
                                     const data = await response.json();
-                                    window.alert(data.message ?? 'An error occurred.');
+                                    window.alert(data.message ?? 'An error has occurred.');
                                     this.deleting = false;
                                 }
                             } catch {
-                                window.alert('Network error. Please try again.');
+                                window.alert('Network error. Try again.');
                                 this.deleting = false;
                             }
                         }
-                    }">
-                    <td class="px-6 py-4 text-sm text-gray-900">{{ $user->name }}</td>
-                    <td class="px-6 py-4 text-sm text-gray-500">{{ $user->email }}</td>
-                    <td class="px-6 py-4 text-sm text-gray-500">{{ $user->created_at->format('d/m/Y H:i') }}</td>
+                    }"
+                    class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors duration-100"
+                >
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sky-100 dark:bg-sky-900/30 text-sky-600 dark:text-sky-400 text-xs font-bold">
+                                {{ strtoupper(substr($user->name, 0, 1)) }}
+                            </div>
+                            <span class="text-sm font-medium text-slate-900 dark:text-slate-100">{{ $user->name }}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">{{ $user->email }}</td>
+                    <td class="hidden px-6 py-4 text-sm text-slate-500 dark:text-slate-400 sm:table-cell">
+                        {{ $user->created_at->format('d/m/Y') }}
+                    </td>
                     <td class="px-6 py-4 text-right">
                         <div class="flex items-center justify-end gap-2">
-                            <a href="{{ route('admin.users.edit', $user->id) }}"
-                                class="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 shadow-xs hover:bg-gray-50 transition-colors duration-150">
-                                <i class="bi bi-pencil"></i> Edit
+                            <a href="{{ route('admin.users.edit', $user->id) }}" class="btn-edit">
+                                <i class="bi bi-pencil" aria-hidden="true"></i> Edit
                             </a>
-                            <button
-                                type="button"
-                                @click="confirmDelete()"
-                                :disabled="deleting"
-                                class="inline-flex items-center gap-1 rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 shadow-xs hover:bg-red-100 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
-                                <i class="bi bi-trash"></i>
+                            <button type="button" @click="confirmDelete()" :disabled="deleting" class="btn-danger">
+                                <i class="bi bi-trash" aria-hidden="true"></i>
                                 <span x-text="deleting ? 'Deleting…' : 'Delete'"></span>
                             </button>
                         </div>
@@ -83,8 +86,11 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="4" class="px-6 py-12 text-center text-sm text-gray-400">
-                        No users found.
+                    <td colspan="4" class="px-6 py-16 text-center">
+                        <div class="flex flex-col items-center gap-2">
+                            <i class="bi bi-people text-4xl text-slate-300 dark:text-slate-600" aria-hidden="true"></i>
+                            <p class="text-sm font-medium text-slate-400 dark:text-slate-500">No users found</p>
+                        </div>
                     </td>
                 </tr>
             @endforelse
@@ -92,11 +98,8 @@
     </table>
 </div>
 
-{{-- Pagination --}}
 @if ($users->hasPages())
-    <div class="mt-4">
-        {{ $users->links() }}
-    </div>
+    <div class="mt-4">{{ $users->links() }}</div>
 @endif
 
 @endsection
