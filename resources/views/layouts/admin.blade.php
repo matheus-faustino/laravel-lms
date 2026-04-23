@@ -43,6 +43,14 @@
                             {{ __('admin/users.page_title') }}
                         </a>
                     </li>
+                    <li>
+                        <a href="{{ route('admin.categories.index') }}"
+                            class="{{ request()->routeIs('admin.categories.*') ? 'bg-sky-500/15 text-sky-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200' }} flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-150"
+                            @if(request()->routeIs('admin.categories.*')) aria-current="page" @endif>
+                            <i class="bi bi-tag text-base w-4 text-center"></i>
+                            {{ __('admin/categories.page_title') }}
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </x-sidebar>
