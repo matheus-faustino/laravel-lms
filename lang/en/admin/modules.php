@@ -4,6 +4,8 @@ return [
     'page_title'   => 'Modules',
     'manage_title' => 'Manage modules — :course',
 
+    'lessons_btn' => 'Lessons',
+
     'add_btn'  => 'Add',
     'adding'   => 'Adding…',
     'saving'   => 'Saving…',

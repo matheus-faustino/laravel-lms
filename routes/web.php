@@ -4,6 +4,7 @@ use App\Enums\RoleEnum;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\LessonController;
 use App\Http\Controllers\Admin\ModuleController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\LoginController;
@@ -85,6 +86,16 @@ Route::middleware('auth', 'role:admin')->prefix('/admin')->as('admin.')->group(f
         Route::post('/create', 'store')->name('store');
         Route::post('/reorder', 'reorder')->name('reorder');
         Route::prefix('{moduleId}')->group(function () {
+            Route::put('/edit', 'update')->name('update');
+            Route::delete('/delete', 'delete')->name('delete');
+        });
+    });
+
+    Route::controller(LessonController::class)->prefix('/courses/{courseId}/modules/{moduleId}/lessons')->as('lessons.')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::post('/create', 'store')->name('store');
+        Route::post('/reorder', 'reorder')->name('reorder');
+        Route::prefix('{lessonId}')->group(function () {
             Route::put('/edit', 'update')->name('update');
             Route::delete('/delete', 'delete')->name('delete');
         });

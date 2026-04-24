@@ -36,6 +36,13 @@
                         class="form-input flex-1 py-1.5 text-sm" type="text" />
 
                     <div class="flex items-center gap-1.5 shrink-0">
+                        <a x-show="editingId !== module.id"
+                            :href="lessonsBase.replace('__id__', module.id)"
+                            class="btn-secondary py-1 px-2.5 text-xs">
+                            <i class="bi bi-play-circle" aria-hidden="true"></i>
+                            {{ __('admin/modules.lessons_btn') }}
+                        </a>
+
                         <button x-show="editingId !== module.id" @click="startEdit(module)" type="button"
                             class="btn-edit py-1 px-2.5 text-xs">
                             <i class="bi bi-pencil" aria-hidden="true"></i>
@@ -98,8 +105,9 @@
 
         storeUrl:   '{{ route('admin.modules.store', $course->id) }}',
         reorderUrl: '{{ route('admin.modules.reorder', $course->id) }}',
-        updateBase: '{{ route('admin.modules.update', [$course->id, '__id__']) }}',
-        deleteBase: '{{ route('admin.modules.delete', [$course->id, '__id__']) }}',
+        updateBase:  '{{ route('admin.modules.update', [$course->id, '__id__']) }}',
+        deleteBase:  '{{ route('admin.modules.delete', [$course->id, '__id__']) }}',
+        lessonsBase: '{{ route('admin.lessons.index', [$course->id, '__id__']) }}',
 
         csrfToken: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
 
