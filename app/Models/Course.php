@@ -6,6 +6,7 @@ use App\Enums\CourseStatusEnum;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['title', 'description', 'thumbnail', 'banner', 'status'])]
 class Course extends Model
@@ -23,5 +24,10 @@ class Course extends Model
         return [
             'status' => CourseStatusEnum::class,
         ];
+    }
+
+    public function modules(): HasMany
+    {
+        return $this->hasMany(Module::class)->orderBy('order');
     }
 }

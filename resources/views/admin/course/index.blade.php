@@ -109,6 +109,9 @@
                                     <span x-text="publishing ? '{{ __('admin/courses.publishing') }}' : '{{ __('admin/courses.publish_btn') }}'"></span>
                                 </button>
                             @endif
+                            <a href="{{ route('admin.modules.index', $course->id) }}" class="btn-edit">
+                                <i class="bi bi-collection" aria-hidden="true"></i> {{ __('admin/modules.page_title') }}
+                            </a>
                             <a href="{{ route('admin.courses.edit', $course->id) }}" class="btn-edit">
                                 <i class="bi bi-pencil" aria-hidden="true"></i> {{ __('shared/ui.edit') }}
                             </a>
