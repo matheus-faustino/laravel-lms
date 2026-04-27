@@ -2,6 +2,14 @@
 
 @section('title', __('admin/courses.create_title'))
 
+@section('breadcrumbs')
+    <x-breadcrumb :items="[
+        ['label' => __('admin/dashboard.title'), 'url' => route('admin.dashboard.index')],
+        ['label' => __('admin/courses.page_title'), 'url' => route('admin.courses.index')],
+        ['label' => __('admin/courses.create_title')],
+    ]" />
+@endsection
+
 @section('content')
 <div class="max-w-2xl">
     <div class="card p-8">

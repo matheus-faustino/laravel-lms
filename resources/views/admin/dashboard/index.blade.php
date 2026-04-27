@@ -2,6 +2,12 @@
 
 @section('title', __('admin/dashboard.title'))
 
+@section('breadcrumbs')
+    <x-breadcrumb :items="[
+        ['label' => __('admin/dashboard.title')],
+    ]" />
+@endsection
+
 @section('content')
 <section aria-labelledby="stats-heading">
     <h2 id="stats-heading" class="sr-only">{{ __('admin/dashboard.stats_heading') }}</h2>

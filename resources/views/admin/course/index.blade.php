@@ -2,6 +2,13 @@
 
 @section('title', __('admin/courses.page_title'))
 
+@section('breadcrumbs')
+    <x-breadcrumb :items="[
+        ['label' => __('admin/dashboard.title'), 'url' => route('admin.dashboard.index')],
+        ['label' => __('admin/courses.page_title')],
+    ]" />
+@endsection
+
 @section('content')
 
 @if (session('success'))

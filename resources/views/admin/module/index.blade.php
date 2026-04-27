@@ -2,15 +2,15 @@
 
 @section('title', __('admin/modules.manage_title', ['course' => $course->title]))
 
-@section('content')
+@section('breadcrumbs')
+    <x-breadcrumb :items="[
+        ['label' => __('admin/dashboard.title'), 'url' => route('admin.dashboard.index')],
+        ['label' => __('admin/courses.page_title'), 'url' => route('admin.courses.index')],
+        ['label' => $course->title],
+    ]" />
+@endsection
 
-<div class="mb-6">
-    <a href="{{ route('admin.courses.index') }}"
-        class="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors">
-        <i class="bi bi-arrow-left" aria-hidden="true"></i>
-        {{ __('admin/courses.page_title') }}
-    </a>
-</div>
+@section('content')
 
 <div x-data="moduleManager()" x-init="init()" class="max-w-2xl">
     <div class="card overflow-hidden">

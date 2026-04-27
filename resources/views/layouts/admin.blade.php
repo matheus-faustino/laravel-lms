@@ -67,7 +67,8 @@
         <div class="flex flex-1 flex-col min-w-0">
             <x-navbar />
             <main class="flex-1 p-6 lg:p-8">
-                <h1 class="text-xl font-bold text-slate-900 dark:text-slate-100 mb-6">@yield('title')</h1>
+                <h1 class="text-xl font-bold text-slate-900 dark:text-slate-100 mb-1">@yield('title')</h1>
+                @yield('breadcrumbs')
                 @yield('content')
             </main>
         </div>

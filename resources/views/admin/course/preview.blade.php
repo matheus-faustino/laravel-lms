@@ -2,6 +2,14 @@
 
 @section('title', $course->title)
 
+@section('breadcrumbs')
+    <x-breadcrumb :items="[
+        ['label' => __('admin/dashboard.title'), 'url' => route('admin.dashboard.index')],
+        ['label' => __('admin/courses.page_title'), 'url' => route('admin.courses.index')],
+        ['label' => __('admin/courses.preview_btn')],
+    ]" />
+@endsection
+
 @section('head-extras')
 <script>
     var ytReady = false;
