@@ -66,4 +66,15 @@ class CourseController extends Controller
 
         return response()->json(['message' => __('admin/courses.published_success')]);
     }
+
+    public function preview(int $courseId): View
+    {
+        $course = $this->courseService->getCourse($courseId);
+
+        abort_if(!$course, 404);
+
+        $course->load('modules.lessons');
+
+        return view('admin.course.preview', compact('course'));
+    }
 }

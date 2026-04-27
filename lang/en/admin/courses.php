@@ -10,6 +10,7 @@ return [
     'create_btn'     => 'Create course',
     'publish_btn'    => 'Publish',
     'publishing'     => 'Publishing…',
+    'preview_btn'    => 'Preview',
 
     'table_title_col'      => 'Title',
     'table_status_col'     => 'Status',

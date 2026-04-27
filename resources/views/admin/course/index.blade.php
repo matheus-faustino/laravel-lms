@@ -112,6 +112,9 @@
                             <a href="{{ route('admin.modules.index', $course->id) }}" class="btn-edit">
                                 <i class="bi bi-collection" aria-hidden="true"></i> {{ __('admin/modules.page_title') }}
                             </a>
+                            <a href="{{ route('admin.courses.preview', $course->id) }}" class="btn-edit">
+                                <i class="bi bi-eye" aria-hidden="true"></i> {{ __('admin/courses.preview_btn') }}
+                            </a>
                             <a href="{{ route('admin.courses.edit', $course->id) }}" class="btn-edit">
                                 <i class="bi bi-pencil" aria-hidden="true"></i> {{ __('shared/ui.edit') }}
                             </a>

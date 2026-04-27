@@ -78,6 +78,7 @@ Route::middleware('auth', 'role:admin')->prefix('/admin')->as('admin.')->group(f
             Route::put('/edit', 'update')->name('update');
             Route::delete('/delete', 'delete')->name('delete');
             Route::patch('/publish', 'publish')->name('publish');
+            Route::get('/preview', 'preview')->name('preview');
         });
     });
 

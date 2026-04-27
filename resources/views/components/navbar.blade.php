@@ -1,4 +1,4 @@
-<header class="border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 transition-colors duration-200">
+<header class="relative z-50 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 transition-colors duration-200">
     <nav class="flex h-16 items-center justify-end gap-3 px-6" aria-label="Navigation">
 
         {{-- Dark mode toggle --}}

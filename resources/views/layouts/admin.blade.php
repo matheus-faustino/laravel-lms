@@ -18,6 +18,7 @@
     </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    @yield('head-extras')
 </head>
 
 <body class="min-h-screen bg-slate-100 dark:bg-slate-950 transition-colors duration-200">
@@ -71,6 +72,8 @@
             </main>
         </div>
     </div>
+
+    @yield('scripts')
 
 </body>
 
