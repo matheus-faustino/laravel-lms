@@ -1,0 +1,50 @@
+<?php
+
+namespace Database\Factories;
+
+use App\Enums\EnrollmentStatusEnum;
+use App\Models\Course;
+use App\Models\Enrollment;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends Factory<Enrollment>
+ */
+class EnrollmentFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'status' => $this->faker->randomElement(EnrollmentStatusEnum::cases()),
+            'course_id' => Course::factory(),
+            'user_id' => User::factory(),
+        ];
+    }
+
+    public function active(): static
+    {
+        return $this->state(fn() => [
+            'status' => EnrollmentStatusEnum::ACTIVE,
+        ]);
+    }
+
+    public function cancelled(): static
+    {
+        return $this->state(fn() => [
+            'status' => EnrollmentStatusEnum::CANCELLED,
+        ]);
+    }
+
+    public function completed(): static
+    {
+        return $this->state(fn() => [
+            'status' => EnrollmentStatusEnum::COMPLETED,
+        ]);
+    }
+}

@@ -4,6 +4,7 @@ use App\Enums\RoleEnum;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\EnrollmentController;
 use App\Http\Controllers\Admin\LessonController;
 use App\Http\Controllers\Admin\ModuleController;
 use App\Http\Controllers\Admin\UserController;
@@ -79,6 +80,17 @@ Route::middleware('auth', 'role:admin')->prefix('/admin')->as('admin.')->group(f
             Route::delete('/delete', 'delete')->name('delete');
             Route::patch('/publish', 'publish')->name('publish');
             Route::get('/preview', 'preview')->name('preview');
+        });
+    });
+
+    Route::controller(EnrollmentController::class)->prefix('/enrollments')->as('enrollments.')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/create', 'create')->name('create');
+        Route::post('/create', 'store')->name('store');
+        Route::prefix('{enrollmentId}')->group(function () {
+            Route::get('/edit', 'edit')->name('edit');
+            Route::put('/edit', 'update')->name('update');
+            Route::delete('/delete', 'delete')->name('delete');
         });
     });
 

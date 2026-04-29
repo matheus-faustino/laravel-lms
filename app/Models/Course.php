@@ -30,4 +30,9 @@ class Course extends Model
     {
         return $this->hasMany(Module::class)->orderBy('order');
     }
+
+    public function users(): HasMany
+    {
+        return $this->hasMany(User::class);
+    }
 }

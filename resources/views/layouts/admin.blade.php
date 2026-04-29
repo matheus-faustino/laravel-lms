@@ -60,6 +60,14 @@
                             {{ __('admin/courses.page_title') }}
                         </a>
                     </li>
+                    <li>
+                        <a href="{{ route('admin.enrollments.index') }}"
+                            class="{{ request()->routeIs('admin.enrollments.*') ? 'bg-sky-500/15 text-sky-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200' }} flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-150"
+                            @if(request()->routeIs('admin.enrollments.*')) aria-current="page" @endif>
+                            <i class="bi bi-journal-check text-base w-4 text-center"></i>
+                            {{ __('admin/enrollments.page_title') }}
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </x-sidebar>

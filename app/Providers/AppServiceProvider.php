@@ -4,11 +4,13 @@ namespace App\Providers;
 
 use App\Interfaces\Services\CategoryServiceInterface;
 use App\Interfaces\Services\CourseServiceInterface;
+use App\Interfaces\Services\EnrollmentServiceInterface;
 use App\Interfaces\Services\LessonServiceInterface;
 use App\Interfaces\Services\ModuleServiceInterface;
 use App\Interfaces\Services\UserServiceInterface;
 use App\Services\CategoryService;
 use App\Services\CourseService;
+use App\Services\EnrollmentService;
 use App\Services\LessonService;
 use App\Services\ModuleService;
 use App\Services\UserService;
@@ -26,6 +28,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(CourseServiceInterface::class, CourseService::class);
         $this->app->bind(ModuleServiceInterface::class, ModuleService::class);
         $this->app->bind(LessonServiceInterface::class, LessonService::class);
+        $this->app->bind(EnrollmentServiceInterface::class, EnrollmentService::class);
     }
 
     /**
