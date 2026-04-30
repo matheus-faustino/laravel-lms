@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\User\DashboardController as UserDashboardController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -23,7 +24,7 @@ Route::get('/', function () {
             break;
 
         case RoleEnum::USER->value:
-            abort(501, __('shared/errors.not_implemented'));
+            return redirect()->route('user.dashboard.index');
             break;
 
         default:
@@ -45,7 +46,7 @@ Route::post('/forgot-password', [ResetPasswordController::class, 'sendPasswordRe
 Route::get('/reset-password/{token}', [ResetPasswordController::class, 'resetPasswordForm'])->name('password.reset');
 Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword']);
 
-Route::middleware('auth', 'role:admin')->prefix('/admin')->as('admin.')->group(function () {
+Route::middleware(['auth', 'role:admin'])->prefix('/admin')->as('admin.')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
 
     Route::controller(UserController::class)->prefix('/users')->as('users.')->group(function () {
@@ -113,4 +114,8 @@ Route::middleware('auth', 'role:admin')->prefix('/admin')->as('admin.')->group(f
             Route::delete('/delete', 'delete')->name('delete');
         });
     });
+});
+
+Route::middleware(['auth', 'role:user'])->prefix('/user')->as('user.')->group(function () {
+    Route::get('/', [UserDashboardController::class, 'index'])->name('dashboard.index');
 });
