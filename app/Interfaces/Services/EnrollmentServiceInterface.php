@@ -51,6 +51,15 @@ interface EnrollmentServiceInterface
     public function deleteEnrollment(int $id): bool;
 
     /**
+     * Retrieve the active enrollment for a given user and course.
+     *
+     * @param int $userId   The user ID.
+     * @param int $courseId The course ID.
+     * @return ?Enrollment
+     */
+    public function getActiveEnrollment(int $userId, int $courseId): ?Enrollment;
+
+    /**
      * Get paginated enrollments based on given criteria
      * 
      * @param array $criteria

@@ -4,6 +4,8 @@ namespace Tests\Unit;
 
 use App\Enums\CourseStatusEnum;
 use App\Models\Course;
+use App\Models\Enrollment;
+use App\Models\User;
 use App\Services\CourseService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -257,5 +259,89 @@ class CourseServiceTest extends TestCase
         $this->assertArrayHasKey('id', $attributes);
         $this->assertArrayHasKey('title', $attributes);
         $this->assertArrayNotHasKey('description', $attributes);
+    }
+
+    public function test_get_paginated_enrolled_courses_returns_paginator_instance(): void
+    {
+        $user = User::factory()->create();
+        Enrollment::factory()->create(['user_id' => $user->id]);
+
+        $result = $this->service->getPaginatedEnrolledCourses($user->id);
+
+        $this->assertInstanceOf(LengthAwarePaginator::class, $result);
+    }
+
+    public function test_get_paginated_enrolled_courses_returns_only_courses_enrolled_by_user(): void
+    {
+        $user = User::factory()->create();
+        $enrolledCourses = Course::factory()->count(2)->create();
+        $enrolledCourses->each(fn($course) => Enrollment::factory()->create([
+            'user_id' => $user->id,
+            'course_id' => $course->id,
+        ]));
+        Course::factory()->count(3)->create();
+
+        $result = $this->service->getPaginatedEnrolledCourses($user->id);
+
+        $this->assertCount(2, $result->items());
+        $returnedIds = collect($result->items())->pluck('id');
+        $this->assertTrue($returnedIds->contains($enrolledCourses[0]->id));
+        $this->assertTrue($returnedIds->contains($enrolledCourses[1]->id));
+    }
+
+    public function test_get_paginated_enrolled_courses_excludes_courses_enrolled_by_other_users(): void
+    {
+        $user = User::factory()->create();
+        $otherUser = User::factory()->create();
+
+        $ownCourse = Course::factory()->create();
+        Enrollment::factory()->create(['user_id' => $user->id, 'course_id' => $ownCourse->id]);
+
+        $otherCourse = Course::factory()->create();
+        Enrollment::factory()->create(['user_id' => $otherUser->id, 'course_id' => $otherCourse->id]);
+
+        $result = $this->service->getPaginatedEnrolledCourses($user->id);
+
+        $this->assertCount(1, $result->items());
+        $this->assertEquals($ownCourse->id, $result->items()[0]->id);
+    }
+
+    public function test_get_paginated_enrolled_courses_returns_empty_when_user_has_no_enrollments(): void
+    {
+        $user = User::factory()->create();
+        Course::factory()->count(3)->create();
+
+        $result = $this->service->getPaginatedEnrolledCourses($user->id);
+
+        $this->assertCount(0, $result->items());
+        $this->assertEquals(0, $result->total());
+    }
+
+    public function test_get_paginated_enrolled_courses_respects_per_page_limit(): void
+    {
+        $user = User::factory()->create();
+        $courses = Course::factory()->count(5)->create();
+        $courses->each(fn($course) => Enrollment::factory()->create([
+            'user_id' => $user->id,
+            'course_id' => $course->id,
+        ]));
+
+        $result = $this->service->getPaginatedEnrolledCourses($user->id, 2);
+
+        $this->assertCount(2, $result->items());
+        $this->assertEquals(5, $result->total());
+    }
+
+    public function test_get_paginated_enrolled_courses_eager_loads_enrollments_relation(): void
+    {
+        $user = User::factory()->create();
+        $course = Course::factory()->create();
+        Enrollment::factory()->create(['user_id' => $user->id, 'course_id' => $course->id]);
+
+        $result = $this->service->getPaginatedEnrolledCourses($user->id);
+
+        $item = $result->items()[0];
+        $this->assertTrue($item->relationLoaded('enrollments'));
+        $this->assertCount(1, $item->enrollments);
     }
 }

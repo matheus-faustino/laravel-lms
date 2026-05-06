@@ -118,4 +118,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('/admin')->as('admin.')->group
 
 Route::middleware(['auth', 'role:user'])->prefix('/user')->as('user.')->group(function () {
     Route::get('/', [UserDashboardController::class, 'index'])->name('dashboard.index');
+
+    Route::controller(\App\Http\Controllers\User\CourseController::class)->prefix('/courses')->as('courses.')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/{courseId}', 'show')->name('show');
+    });
 });

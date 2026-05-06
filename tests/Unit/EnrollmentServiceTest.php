@@ -177,4 +177,40 @@ class EnrollmentServiceTest extends TestCase
         $this->assertArrayHasKey('status', $attributes);
         $this->assertArrayNotHasKey('user_id', $attributes);
     }
+
+    public function test_get_active_enrollment_returns_enrollment_for_user_and_course(): void
+    {
+        $user = User::factory()->create();
+        $course = Course::factory()->create();
+        $enrollment = Enrollment::factory()->active()->create([
+            'user_id' => $user->id,
+            'course_id' => $course->id,
+        ]);
+
+        $result = $this->service->getActiveEnrollment($user->id, $course->id);
+
+        $this->assertInstanceOf(Enrollment::class, $result);
+        $this->assertTrue($result->is($enrollment));
+    }
+
+    public function test_get_active_enrollment_returns_null_when_no_match(): void
+    {
+        $result = $this->service->getActiveEnrollment(PHP_INT_MAX, PHP_INT_MAX);
+
+        $this->assertNull($result);
+    }
+
+    public function test_get_active_enrollment_ignores_non_active_statuses(): void
+    {
+        $user = User::factory()->create();
+        $course = Course::factory()->create();
+        Enrollment::factory()->cancelled()->create([
+            'user_id' => $user->id,
+            'course_id' => $course->id,
+        ]);
+
+        $result = $this->service->getActiveEnrollment($user->id, $course->id);
+
+        $this->assertNull($result);
+    }
 }

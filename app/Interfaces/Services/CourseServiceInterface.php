@@ -57,4 +57,12 @@ interface CourseServiceInterface
      * @return LengthAwarePaginator
      */
     public function getPaginatedCourses(?int $perPage = 10, ?array $criteria = [], ?array $colums = ['*']): LengthAwarePaginator;
+
+    /**
+     * Retrieve paginated courses where a user is enrolled
+     * 
+     * @param int $userId The user ID
+     * @return LengthAwarePaginator
+     */
+    public function getPaginatedEnrolledCourses(int $userId, ?int $perPage = 10, ?array $columns = ['*']): LengthAwarePaginator;
 }

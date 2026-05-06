@@ -38,6 +38,14 @@
                             {{ __('user/dashboard.title') }}
                         </a>
                     </li>
+                    <li>
+                        <a href="{{ route('user.courses.index') }}"
+                            class="{{ request()->routeIs('user.courses.*') ? 'bg-sky-500/15 text-sky-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200' }} flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-150"
+                            @if(request()->routeIs('user.courses.*')) aria-current="page" @endif>
+                            <i class="bi bi-collection-play text-base w-4 text-center"></i>
+                            {{ __('user/courses.page_title') }}
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </x-sidebar>

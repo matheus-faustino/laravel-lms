@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\EnrollmentStatusEnum;
 use App\Interfaces\Services\EnrollmentServiceInterface;
 use App\Models\Enrollment;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -54,5 +55,15 @@ class EnrollmentService implements EnrollmentServiceInterface
     public function getPaginatedEnrollments(?int $perPage = 10, ?array $criteria = [], ?array $colums = ['*']): LengthAwarePaginator
     {
         return Enrollment::query()->with(['user:id,name,email', 'course:id,title'])->where($criteria)->paginate($perPage, $colums);
+    }
+
+    /** @inheritDoc */
+    public function getActiveEnrollment(int $userId, int $courseId): ?Enrollment
+    {
+        return Enrollment::query()
+            ->where('user_id', $userId)
+            ->where('course_id', $courseId)
+            ->where('status', EnrollmentStatusEnum::ACTIVE)
+            ->first();
     }
 }

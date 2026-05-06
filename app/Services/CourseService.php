@@ -6,7 +6,7 @@ use App\Interfaces\Services\CourseServiceInterface;
 use App\Models\Course;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
-use App\Enums\CourseStatusEnum;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -79,5 +79,13 @@ class CourseService implements CourseServiceInterface
     public function getPaginatedCourses(?int $perPage = 10, ?array $criteria = [], ?array $colums = ['*']): LengthAwarePaginator
     {
         return Course::query()->where($criteria)->paginate($perPage, $colums);
+    }
+
+    /** @inheritDoc */
+    public function getPaginatedEnrolledCourses(int $userId, ?int $perPage = 10, ?array $columns = ['*']): LengthAwarePaginator
+    {
+        return Course::query()->whereHas('enrollments', function (Builder $query) use ($userId) {
+            return $query->where('enrollments.user_id', $userId);
+        })->with('enrollments')->paginate($perPage);
     }
 }
