@@ -123,4 +123,8 @@ Route::middleware(['auth', 'role:user'])->prefix('/user')->as('user.')->group(fu
         Route::get('/', 'index')->name('index');
         Route::get('/{courseId}', 'show')->name('show');
     });
+
+    Route::controller(\App\Http\Controllers\User\LessonProgressController::class)->prefix('/courses/{courseId}/lessons')->as('progress.')->group(function () {
+        Route::post('/{lessonId}/watch', 'watch')->name('watch');
+    });
 });

@@ -26,7 +26,7 @@
 @endsection
 
 @section('content')
-<div class="card overflow-hidden flex min-h-[75vh] relative" x-data="coursePreview()" @keydown.escape.window="sidebarOpen = false">
+<div class="card overflow-hidden flex min-h-[75vh] relative" x-data="coursePreview({{ $course->id }}, {{ json_encode($watchedLessonIds) }}, {{ json_encode($progress) }})" @keydown.escape.window="sidebarOpen = false">
 
     <div class="flex-1 overflow-y-auto min-w-0">
 
@@ -84,6 +84,20 @@
             </button>
         </div>
 
+        <div class="px-4 py-3 border-b border-slate-200 dark:border-slate-800">
+            <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs font-medium text-slate-600 dark:text-slate-400">{{ __('course/preview.your_progress') }}</span>
+                <span class="text-xs font-semibold text-sky-600 dark:text-sky-400" x-text="progress.percentage + '%'"></span>
+            </div>
+            <div class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                <div class="h-full bg-sky-500 dark:bg-sky-400 rounded-full transition-all duration-500"
+                    :style="'width: ' + progress.percentage + '%'"></div>
+            </div>
+            <p class="text-xs text-slate-400 dark:text-slate-500 mt-1">
+                <span x-text="progress.watched"></span>/<span x-text="progress.total"></span> {{ __('course/preview.lessons_completed') }}
+            </p>
+        </div>
+
         @forelse ($course->modules as $module)
         <div class="border-b border-slate-100 dark:border-slate-800 last:border-b-0">
 
@@ -121,6 +135,8 @@
                             {{ gmdate('H:i:s', $lesson->duration) }}
                         </p>
                     </div>
+                    <i class="bi bi-check-circle-fill text-sm shrink-0 text-emerald-500 dark:text-emerald-400 mt-0.5"
+                        :class="watchedLessonIds.includes({{ $lesson->id }}) ? '' : 'hidden'"></i>
                 </button>
                 @empty
                 <p
@@ -145,14 +161,18 @@
 
 @section('scripts')
 <script>
-    function coursePreview() {
+    function coursePreview(courseId, watchedLessonIds, progress) {
     return {
+        courseId: courseId,
         activeLesson: null,
         openModules: {},
         player: null,
         ytReady: false,
         pendingVideoId: null,
         sidebarOpen: false,
+        watchedLessonIds: watchedLessonIds,
+        progress: progress,
+        csrfToken: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
 
         init() {
             if (window.ytReady) {
@@ -172,7 +192,10 @@
             this.activeLesson = lesson;
             this.sidebarOpen = false;
 
-            if (lesson.type !== 'video') return;
+            if (lesson.type === 'text') {
+                this.markWatched(lesson.id);
+                return;
+            }
 
             if (this.ytReady) {
                 this.$nextTick(() => {
@@ -187,12 +210,39 @@
             }
         },
 
+        markWatched(lessonId) {
+            if (this.watchedLessonIds.includes(lessonId)) return;
+
+            fetch(`/user/courses/${this.courseId}/lessons/${lessonId}/watch`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': this.csrfToken,
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.watched) {
+                    this.watchedLessonIds.push(lessonId);
+                    this.progress = data.progress;
+                }
+            });
+        },
+
         createPlayer(youtubeId) {
+            const self = this;
             this.player = new YT.Player('youtube-player', {
                 videoId: youtubeId,
                 width: '100%',
                 height: '100%',
                 playerVars: { autoplay: 1, rel: 0 },
+                events: {
+                    onStateChange: function(event) {
+                        if (event.data === YT.PlayerState.ENDED && self.activeLesson) {
+                            self.markWatched(self.activeLesson.id);
+                        }
+                    },
+                },
             });
         },
 

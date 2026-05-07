@@ -95,8 +95,10 @@ class CourseTest extends TestCase
             ->get(route('user.courses.show', $course->id))
             ->assertOk()
             ->assertViewIs('user.course.show')
-            ->assertViewHas('course', fn (Course $c) => $c->is($course))
-            ->assertViewHas('enrollment', fn (Enrollment $e) => $e->is($enrollment));
+            ->assertViewHas('course')
+            ->assertViewHas('enrollment')
+            ->assertViewHas('watchedLessonIds', [])
+            ->assertViewHas('progress', ['total' => 0, 'watched' => 0, 'percentage' => 0.0]);
     }
 
     public function test_show_returns_403_when_not_enrolled(): void

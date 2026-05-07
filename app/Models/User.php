@@ -52,6 +52,11 @@ class User extends Authenticatable implements CanResetPassword
         return $this->hasMany(Enrollment::class);
     }
 
+    public function lessonProgress(): HasMany
+    {
+        return $this->hasMany(LessonProgress::class);
+    }
+
     #[Scope]
     protected function users(Builder $query): void
     {
