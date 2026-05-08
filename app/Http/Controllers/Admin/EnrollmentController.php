@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreEnrollmentRequest;
 use App\Http\Requests\Admin\UpdateEnrollmentRequest;
 use App\Interfaces\Services\EnrollmentServiceInterface;
+use App\Interfaces\Services\LessonProgressServiceInterface;
 use App\Models\Course;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
@@ -16,7 +17,10 @@ use Illuminate\Http\Request;
 
 class EnrollmentController extends Controller
 {
-    public function __construct(private EnrollmentServiceInterface $serviceInterface) {}
+    public function __construct(
+        private EnrollmentServiceInterface $serviceInterface,
+        private LessonProgressServiceInterface $progressService,
+    ) {}
 
     public function index(Request $request): View
     {
@@ -24,7 +28,39 @@ class EnrollmentController extends Controller
             $request->query('perPage', 10),
         );
 
-        return view('admin.enrollment.index', compact('enrollments'));
+        $progressMap = [];
+        foreach ($enrollments as $enrollment) {
+            $progressMap[$enrollment->id] = $this->progressService->getCourseProgress(
+                $enrollment->user_id,
+                $enrollment->course_id,
+            );
+        }
+
+        return view('admin.enrollment.index', compact('enrollments', 'progressMap'));
+    }
+
+    public function progress(int $enrollmentId): View
+    {
+        $enrollment = $this->serviceInterface->getEnrollment($enrollmentId);
+
+        abort_if(! $enrollment, 404);
+
+        $modules = Course::query()
+            ->with(['modules' => fn ($q) => $q->orderBy('order')->with(['lessons' => fn ($q) => $q->orderBy('order')])])
+            ->find($enrollment->course_id)
+            ?->modules ?? collect();
+
+        $watchedLessonIds = $this->progressService->getWatchedLessonIds(
+            $enrollment->user_id,
+            $enrollment->course_id,
+        );
+
+        $progress = $this->progressService->getCourseProgress(
+            $enrollment->user_id,
+            $enrollment->course_id,
+        );
+
+        return view('admin.enrollment.progress', compact('enrollment', 'modules', 'watchedLessonIds', 'progress'));
     }
 
     public function create(): View

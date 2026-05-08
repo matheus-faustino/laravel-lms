@@ -6,6 +6,9 @@ use App\Enums\EnrollmentStatusEnum;
 use App\Enums\RoleEnum;
 use App\Models\Course;
 use App\Models\Enrollment;
+use App\Models\Lesson;
+use App\Models\LessonProgress;
+use App\Models\Module;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -103,16 +106,25 @@ class EnrollmentTest extends TestCase
     public function test_index_returns_paginated_enrollments(): void
     {
         /** @var \Illuminate\Contracts\Auth\Authenticatable $admin */
-        $admin = User::factory()->create(['role' => RoleEnum::ADMIN]);
-
-        Enrollment::factory()->count(3)->create();
+        $admin       = User::factory()->create(['role' => RoleEnum::ADMIN]);
+        $enrollments = Enrollment::factory()->count(3)->create();
 
         $this->actingAs($admin)
             ->get(route('admin.enrollments.index'))
             ->assertOk()
             ->assertViewIs('admin.enrollment.index')
-            ->assertViewHas('enrollments', function (LengthAwarePaginator $enrollments) {
-                $this->assertCount(3, $enrollments->items());
+            ->assertViewHas('enrollments', function (LengthAwarePaginator $paginated) {
+                $this->assertCount(3, $paginated->items());
+
+                return true;
+            })
+            ->assertViewHas('progressMap', function (array $progressMap) use ($enrollments) {
+                foreach ($enrollments as $enrollment) {
+                    $this->assertArrayHasKey($enrollment->id, $progressMap);
+                    $this->assertArrayHasKey('total', $progressMap[$enrollment->id]);
+                    $this->assertArrayHasKey('watched', $progressMap[$enrollment->id]);
+                    $this->assertArrayHasKey('percentage', $progressMap[$enrollment->id]);
+                }
 
                 return true;
             });
@@ -351,5 +363,106 @@ class EnrollmentTest extends TestCase
         $this->actingAs($admin)
             ->delete(route('admin.enrollments.delete', ['enrollmentId' => 999]))
             ->assertNotFound();
+    }
+
+    public function test_admin_can_access_progress_route(): void
+    {
+        /** @var \Illuminate\Contracts\Auth\Authenticatable $admin */
+        $admin      = User::factory()->create(['role' => RoleEnum::ADMIN]);
+        $enrollment = Enrollment::factory()->create();
+
+        $this->actingAs($admin)
+            ->get(route('admin.enrollments.progress', ['enrollmentId' => $enrollment->id]))
+            ->assertOk();
+    }
+
+    public function test_regular_user_cannot_access_progress_route(): void
+    {
+        /** @var \Illuminate\Contracts\Auth\Authenticatable $user */
+        $user       = User::factory()->create(['role' => RoleEnum::USER]);
+        $enrollment = Enrollment::factory()->create();
+
+        $this->actingAs($user)
+            ->get(route('admin.enrollments.progress', ['enrollmentId' => $enrollment->id]))
+            ->assertForbidden();
+    }
+
+    public function test_unauthenticated_user_cannot_access_progress_route(): void
+    {
+        $this->get(route('admin.enrollments.progress', ['enrollmentId' => 1]))
+            ->assertRedirect(route('login'));
+    }
+
+    public function test_progress_nonexistent_enrollment_returns_not_found(): void
+    {
+        /** @var \Illuminate\Contracts\Auth\Authenticatable $admin */
+        $admin = User::factory()->create(['role' => RoleEnum::ADMIN]);
+
+        $this->actingAs($admin)
+            ->get(route('admin.enrollments.progress', ['enrollmentId' => 999]))
+            ->assertNotFound();
+    }
+
+    public function test_progress_view_contains_enrollment_modules_and_progress(): void
+    {
+        /** @var \Illuminate\Contracts\Auth\Authenticatable $admin */
+        $admin      = User::factory()->create(['role' => RoleEnum::ADMIN]);
+        $user       = User::factory()->create(['role' => RoleEnum::USER]);
+        $course     = Course::factory()->create();
+        $module     = Module::factory()->create(['course_id' => $course->id]);
+        Lesson::factory()->count(2)->create(['module_id' => $module->id]);
+        $enrollment = Enrollment::factory()->create(['user_id' => $user->id, 'course_id' => $course->id]);
+
+        $this->actingAs($admin)
+            ->get(route('admin.enrollments.progress', ['enrollmentId' => $enrollment->id]))
+            ->assertOk()
+            ->assertViewIs('admin.enrollment.progress')
+            ->assertViewHas('enrollment', fn (Enrollment $e) => $e->is($enrollment))
+            ->assertViewHas('modules')
+            ->assertViewHas('watchedLessonIds')
+            ->assertViewHas('progress');
+    }
+
+    public function test_progress_watched_lesson_ids_reflect_user_progress(): void
+    {
+        /** @var \Illuminate\Contracts\Auth\Authenticatable $admin */
+        $admin      = User::factory()->create(['role' => RoleEnum::ADMIN]);
+        $user       = User::factory()->create(['role' => RoleEnum::USER]);
+        $course     = Course::factory()->create();
+        $module     = Module::factory()->create(['course_id' => $course->id]);
+        $lessons    = Lesson::factory()->count(3)->create(['module_id' => $module->id]);
+        $enrollment = Enrollment::factory()->create(['user_id' => $user->id, 'course_id' => $course->id]);
+
+        LessonProgress::factory()->create(['user_id' => $user->id, 'lesson_id' => $lessons[0]->id]);
+        LessonProgress::factory()->create(['user_id' => $user->id, 'lesson_id' => $lessons[1]->id]);
+
+        $this->actingAs($admin)
+            ->get(route('admin.enrollments.progress', ['enrollmentId' => $enrollment->id]))
+            ->assertViewHas('watchedLessonIds', function (array $ids) use ($lessons) {
+                $this->assertContains($lessons[0]->id, $ids);
+                $this->assertContains($lessons[1]->id, $ids);
+                $this->assertNotContains($lessons[2]->id, $ids);
+
+                return true;
+            })
+            ->assertViewHas('progress', function (array $progress) {
+                $this->assertEquals(3, $progress['total']);
+                $this->assertEquals(2, $progress['watched']);
+
+                return true;
+            });
+    }
+
+    public function test_progress_view_for_course_without_lessons(): void
+    {
+        /** @var \Illuminate\Contracts\Auth\Authenticatable $admin */
+        $admin      = User::factory()->create(['role' => RoleEnum::ADMIN]);
+        $enrollment = Enrollment::factory()->create();
+
+        $this->actingAs($admin)
+            ->get(route('admin.enrollments.progress', ['enrollmentId' => $enrollment->id]))
+            ->assertOk()
+            ->assertViewHas('watchedLessonIds', [])
+            ->assertViewHas('progress', fn (array $p) => $p['total'] === 0 && $p['watched'] === 0 && $p['percentage'] === 0.0);
     }
 }

@@ -89,6 +89,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('/admin')->as('admin.')->group
         Route::get('/create', 'create')->name('create');
         Route::post('/create', 'store')->name('store');
         Route::prefix('{enrollmentId}')->group(function () {
+            Route::get('/progress', 'progress')->name('progress');
             Route::get('/edit', 'edit')->name('edit');
             Route::put('/edit', 'update')->name('update');
             Route::delete('/delete', 'delete')->name('delete');

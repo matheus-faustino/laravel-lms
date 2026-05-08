@@ -12,6 +12,7 @@ return [
     'table_user_col'       => 'User',
     'table_course_col'     => 'Course',
     'table_status_col'     => 'Status',
+    'table_progress_col'   => 'Progress',
     'table_created_at_col' => 'Created at',
 
     'user_label'   => 'User',
@@ -27,6 +28,12 @@ return [
 
     'no_enrollments_found' => 'No enrollments found',
     'delete_confirm'       => 'Delete enrollment for :name? This action cannot be undone.',
+
+    'progress_details_btn'   => 'Progress details',
+    'progress_details_title' => 'Progress Details',
+    'progress_no_lessons'    => 'This course has no lessons yet.',
+    'lesson_completed_label' => 'Completed',
+    'lesson_pending_label'   => 'Pending',
 
     'created_success' => 'Enrollment created successfully!',
     'updated_success' => 'Enrollment updated successfully!',
