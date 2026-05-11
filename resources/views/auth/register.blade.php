@@ -20,15 +20,7 @@
 
     {{-- Dark mode toggle --}}
     <div class="absolute top-4 right-4 z-10">
-        <button
-            onclick="(function(){var h=document.documentElement,d=h.classList.toggle('dark');localStorage.setItem('theme',d?'dark':'light');})()"
-            type="button"
-            class="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-sky-500 shadow-sm"
-            aria-label="{{ __('shared/ui.toggle_dark_mode') }}"
-        >
-            <i class="bi bi-sun text-base dark:hidden" aria-hidden="true"></i>
-            <i class="bi bi-moon text-base hidden dark:block" aria-hidden="true"></i>
-        </button>
+        <x-dark-mode-toggle />
     </div>
 
     <div class="flex min-h-screen">
@@ -76,50 +68,46 @@
                     <p class="mt-1.5 text-sm text-slate-500 dark:text-slate-400">{{ __('shared/auth.register_subtitle') }}</p>
                 </div>
 
-                @if ($errors->any())
-                    <div class="alert-error mb-6">
-                        <ul class="list-disc list-inside space-y-1">
-                            @foreach ($errors->all() as $error)
-                                <li class="text-sm text-red-600 dark:text-red-400">{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
+                <x-form-errors />
 
                 <form method="POST" action="{{ route('register.submit') }}" class="space-y-5">
                     @csrf
 
-                    <div>
-                        <label for="name" class="form-label">{{ __('shared/ui.name_label') }}</label>
-                        <input id="name" type="text" name="name" value="{{ old('name') }}"
-                            required autofocus autocomplete="name"
-                            placeholder="{{ __('shared/auth.register_name_placeholder') }}"
-                            class="form-input @error('name') form-input-error @enderror">
-                    </div>
+                    <x-form-input
+                        name="name"
+                        :label="__('shared/ui.name_label')"
+                        :placeholder="__('shared/auth.register_name_placeholder')"
+                        :required="true"
+                        autocomplete="name"
+                        autofocus
+                    />
 
-                    <div>
-                        <label for="email" class="form-label">{{ __('shared/ui.email_label') }}</label>
-                        <input id="email" type="email" name="email" value="{{ old('email') }}"
-                            required autocomplete="email"
-                            placeholder="{{ __('shared/auth.register_email_placeholder') }}"
-                            class="form-input @error('email') form-input-error @enderror">
-                    </div>
+                    <x-form-input
+                        name="email"
+                        type="email"
+                        :label="__('shared/ui.email_label')"
+                        :placeholder="__('shared/auth.register_email_placeholder')"
+                        :required="true"
+                        autocomplete="email"
+                    />
 
-                    <div>
-                        <label for="password" class="form-label">{{ __('shared/ui.password_label') }}</label>
-                        <input id="password" type="password" name="password"
-                            required autocomplete="new-password"
-                            placeholder="{{ __('shared/ui.password_placeholder') }}"
-                            class="form-input @error('password') form-input-error @enderror">
-                    </div>
+                    <x-form-input
+                        name="password"
+                        type="password"
+                        :label="__('shared/ui.password_label')"
+                        :placeholder="__('shared/ui.password_placeholder')"
+                        :required="true"
+                        autocomplete="new-password"
+                    />
 
-                    <div>
-                        <label for="password_confirmation" class="form-label">{{ __('shared/ui.confirm_password_label') }}</label>
-                        <input id="password_confirmation" type="password" name="password_confirmation"
-                            required autocomplete="new-password"
-                            placeholder="{{ __('shared/ui.confirm_password_placeholder') }}"
-                            class="form-input">
-                    </div>
+                    <x-form-input
+                        name="password_confirmation"
+                        type="password"
+                        :label="__('shared/ui.confirm_password_label')"
+                        :placeholder="__('shared/ui.confirm_password_placeholder')"
+                        :required="true"
+                        autocomplete="new-password"
+                    />
 
                     <button type="submit" class="btn-primary w-full justify-center">
                         {{ __('shared/auth.register_submit') }}

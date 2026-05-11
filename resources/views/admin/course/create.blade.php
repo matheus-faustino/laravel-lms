@@ -16,15 +16,11 @@
         <form method="POST" action="{{ route('admin.courses.store') }}" enctype="multipart/form-data" class="space-y-5">
             @csrf
             @include('admin.course.form')
-            <div class="flex items-center gap-3 pt-2">
-                <button type="submit" class="btn-primary">
-                    <i class="bi bi-play-circle" aria-hidden="true"></i>
-                    {{ __('admin/courses.create_btn') }}
-                </button>
-                <a href="{{ route('admin.courses.index') }}" class="btn-secondary">
-                    {{ __('shared/ui.cancel') }}
-                </a>
-            </div>
+            <x-form-actions
+                :submit-label="__('admin/courses.create_btn')"
+                submit-icon="play-circle"
+                :cancel-route="route('admin.courses.index')"
+            />
         </form>
     </div>
 </div>

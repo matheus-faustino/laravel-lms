@@ -1,19 +1,14 @@
-@if ($errors->any())
-    <div class="alert-error mb-6">
-        <ul class="list-disc list-inside space-y-1">
-            @foreach ($errors->all() as $error)
-                <li class="text-sm text-red-600 dark:text-red-400">{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
+<x-form-errors />
 
-<div>
-    <label for="title" class="form-label">{{ __('admin/courses.title_label') }}</label>
-    <input id="title" type="text" name="title" value="{{ old('title', $course->title ?? '') }}"
-        required autofocus autocomplete="off" maxlength="255"
-        class="form-input @error('title') form-input-error @enderror">
-</div>
+<x-form-input
+    name="title"
+    :label="__('admin/courses.title_label')"
+    :value="$course->title ?? ''"
+    :required="true"
+    autocomplete="off"
+    autofocus
+    maxlength="255"
+/>
 
 <div>
     <label for="description" class="form-label">{{ __('admin/courses.description_label') }}</label>

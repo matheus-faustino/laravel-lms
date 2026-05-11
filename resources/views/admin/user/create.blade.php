@@ -16,15 +16,11 @@
         <form method="POST" action="{{ route('admin.users.store') }}" class="space-y-5">
             @csrf
             @include('admin.user.form')
-            <div class="flex items-center gap-3 pt-2">
-                <button type="submit" class="btn-primary">
-                    <i class="bi bi-person-plus" aria-hidden="true"></i>
-                    {{ __('admin/users.create_btn') }}
-                </button>
-                <a href="{{ route('admin.users.index') }}" class="btn-secondary">
-                    {{ __('shared/ui.cancel') }}
-                </a>
-            </div>
+            <x-form-actions
+                :submit-label="__('admin/users.create_btn')"
+                submit-icon="person-plus"
+                :cancel-route="route('admin.users.index')"
+            />
         </form>
     </div>
 </div>

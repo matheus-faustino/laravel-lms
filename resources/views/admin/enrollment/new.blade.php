@@ -87,15 +87,11 @@
         <form method="POST" action="{{ route('admin.enrollments.store') }}" class="space-y-5">
             @csrf
             @include('admin.enrollment.form')
-            <div class="flex items-center gap-3 pt-2">
-                <button type="submit" class="btn-primary">
-                    <i class="bi bi-journal-plus" aria-hidden="true"></i>
-                    {{ __('admin/enrollments.create_btn') }}
-                </button>
-                <a href="{{ route('admin.enrollments.index') }}" class="btn-secondary">
-                    {{ __('shared/ui.cancel') }}
-                </a>
-            </div>
+            <x-form-actions
+                :submit-label="__('admin/enrollments.create_btn')"
+                submit-icon="journal-plus"
+                :cancel-route="route('admin.enrollments.index')"
+            />
         </form>
     </div>
 </div>

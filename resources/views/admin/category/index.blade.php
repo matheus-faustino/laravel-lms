@@ -24,10 +24,10 @@
     <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-800">
         <thead>
             <tr class="bg-slate-50 dark:bg-slate-800/50">
-                <th scope="col" class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">{{ __('admin/categories.table_name_col') }}</th>
-                <th scope="col" class="hidden px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 sm:table-cell">{{ __('admin/categories.table_parent_col') }}</th>
-                <th scope="col" class="hidden px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 sm:table-cell">{{ __('admin/categories.table_created_at_col') }}</th>
-                <th scope="col" class="px-6 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">{{ __('shared/ui.actions_label') }}</th>
+                <x-table-header-cell>{{ __('admin/categories.table_name_col') }}</x-table-header-cell>
+                <x-table-header-cell :hidden="true">{{ __('admin/categories.table_parent_col') }}</x-table-header-cell>
+                <x-table-header-cell :hidden="true">{{ __('admin/categories.table_created_at_col') }}</x-table-header-cell>
+                <x-table-header-cell align="right">{{ __('shared/ui.actions_label') }}</x-table-header-cell>
             </tr>
         </thead>
         <tbody class="divide-y divide-slate-100 dark:divide-slate-800">

@@ -24,12 +24,12 @@
     <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-800">
         <thead>
             <tr class="bg-slate-50 dark:bg-slate-800/50">
-                <th scope="col" class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">{{ __('admin/enrollments.table_user_col') }}</th>
-                <th scope="col" class="hidden px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 sm:table-cell">{{ __('admin/enrollments.table_course_col') }}</th>
-                <th scope="col" class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">{{ __('admin/enrollments.table_status_col') }}</th>
-                <th scope="col" class="hidden px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 sm:table-cell">{{ __('admin/enrollments.table_progress_col') }}</th>
-                <th scope="col" class="hidden px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 sm:table-cell">{{ __('admin/enrollments.table_created_at_col') }}</th>
-                <th scope="col" class="px-6 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">{{ __('shared/ui.actions_label') }}</th>
+                <x-table-header-cell>{{ __('admin/enrollments.table_user_col') }}</x-table-header-cell>
+                <x-table-header-cell :hidden="true">{{ __('admin/enrollments.table_course_col') }}</x-table-header-cell>
+                <x-table-header-cell>{{ __('admin/enrollments.table_status_col') }}</x-table-header-cell>
+                <x-table-header-cell :hidden="true">{{ __('admin/enrollments.table_progress_col') }}</x-table-header-cell>
+                <x-table-header-cell :hidden="true">{{ __('admin/enrollments.table_created_at_col') }}</x-table-header-cell>
+                <x-table-header-cell align="right">{{ __('shared/ui.actions_label') }}</x-table-header-cell>
             </tr>
         </thead>
         <tbody class="divide-y divide-slate-100 dark:divide-slate-800">

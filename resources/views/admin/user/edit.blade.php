@@ -17,15 +17,11 @@
             @csrf
             @method('PUT')
             @include('admin.user.form')
-            <div class="flex items-center gap-3 pt-2">
-                <button type="submit" class="btn-primary">
-                    <i class="bi bi-floppy" aria-hidden="true"></i>
-                    {{ __('shared/ui.save_changes') }}
-                </button>
-                <a href="{{ route('admin.users.index') }}" class="btn-secondary">
-                    {{ __('shared/ui.cancel') }}
-                </a>
-            </div>
+            <x-form-actions
+                :submit-label="__('shared/ui.save_changes')"
+                submit-icon="floppy"
+                :cancel-route="route('admin.users.index')"
+            />
         </form>
     </div>
 </div>
