@@ -49,12 +49,7 @@
                 <p class="mt-1.5 text-sm text-slate-500 dark:text-slate-400">{{ __('shared/auth.forgot_password_subtitle') }}</p>
             </div>
 
-            @if (session('status'))
-                <div class="alert-success mb-6">
-                    <i class="bi bi-check-circle-fill text-green-500 dark:text-green-400 shrink-0" aria-hidden="true"></i>
-                    <p class="text-sm text-green-700 dark:text-green-300">{{ session('status') }}</p>
-                </div>
-            @endif
+            <x-alert :message="session('status')" />
 
             @if ($errors->any())
                 <div class="alert-error mb-6">

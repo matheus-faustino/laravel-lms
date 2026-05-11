@@ -11,12 +11,7 @@
 
 @section('content')
 
-@if (session('success'))
-    <div class="alert-success mb-6">
-        <i class="bi bi-check-circle-fill text-green-500 dark:text-green-400 shrink-0" aria-hidden="true"></i>
-        <p class="text-sm text-green-700 dark:text-green-300">{{ session('success') }}</p>
-    </div>
-@endif
+<x-alert :message="session('success')" />
 
 <div class="mb-4 flex items-center justify-between">
     <a href="{{ route('admin.enrollments.create') }}" class="btn-primary">
@@ -79,34 +74,20 @@
                         {{ $enrollment->course?->title ?? '—' }}
                     </td>
                     <td class="px-6 py-4">
-                        @php $status = $enrollment->status->value @endphp
-                        @if ($status === 'active')
-                            <span class="inline-flex items-center gap-1 rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400">
-                                <i class="bi bi-circle-fill text-[6px]" aria-hidden="true"></i>
-                                {{ __('admin/enrollments.status_active') }}
-                            </span>
-                        @elseif ($status === 'completed')
-                            <span class="inline-flex items-center gap-1 rounded-full bg-sky-100 px-2.5 py-0.5 text-xs font-medium text-sky-700 dark:bg-sky-900/30 dark:text-sky-400">
-                                <i class="bi bi-circle-fill text-[6px]" aria-hidden="true"></i>
-                                {{ __('admin/enrollments.status_completed') }}
-                            </span>
-                        @else
-                            <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600 dark:bg-slate-700 dark:text-slate-300">
-                                <i class="bi bi-circle-fill text-[6px]" aria-hidden="true"></i>
-                                {{ __('admin/enrollments.status_cancelled') }}
-                            </span>
-                        @endif
+                        @php
+                            $status = $enrollment->status->value;
+                            $statusLabels = [
+                                'active'    => __('admin/enrollments.status_active'),
+                                'completed' => __('admin/enrollments.status_completed'),
+                                'cancelled' => __('admin/enrollments.status_cancelled'),
+                            ];
+                        @endphp
+                        <x-status-badge :status="$status" :label="$statusLabels[$status] ?? $status" />
                     </td>
                     <td class="hidden px-6 py-4 sm:table-cell">
                         @php $p = $progressMap[$enrollment->id] @endphp
                         <div class="w-36">
-                            <div class="mb-1.5 flex items-center justify-between">
-                                <span class="text-xs font-medium text-slate-600 dark:text-slate-400">{{ $p['watched'] }}/{{ $p['total'] }}</span>
-                                <span class="text-xs font-semibold text-sky-600 dark:text-sky-400">{{ $p['percentage'] }}%</span>
-                            </div>
-                            <div class="h-2 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
-                                <div class="h-full rounded-full bg-sky-500 dark:bg-sky-400 transition-all duration-500" style="width: {{ $p['percentage'] }}%"></div>
-                            </div>
+                            <x-progress-bar :percentage="$p['percentage']" :watched="$p['watched']" :total="$p['total']" />
                         </div>
                     </td>
                     <td class="hidden px-6 py-4 text-sm text-slate-500 dark:text-slate-400 sm:table-cell">
@@ -130,10 +111,7 @@
             @empty
                 <tr>
                     <td colspan="6" class="px-6 py-16 text-center">
-                        <div class="flex flex-col items-center gap-2">
-                            <i class="bi bi-journal-check text-4xl text-slate-300 dark:text-slate-600" aria-hidden="true"></i>
-                            <p class="text-sm font-medium text-slate-400 dark:text-slate-500">{{ __('admin/enrollments.no_enrollments_found') }}</p>
-                        </div>
+                        <x-empty-state icon="journal-check" :message="__('admin/enrollments.no_enrollments_found')" />
                     </td>
                 </tr>
             @endforelse

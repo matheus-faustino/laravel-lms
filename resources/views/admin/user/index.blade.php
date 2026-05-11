@@ -11,12 +11,7 @@
 
 @section('content')
 
-@if (session('success'))
-    <div class="alert-success mb-6">
-        <i class="bi bi-check-circle-fill text-green-500 dark:text-green-400 shrink-0" aria-hidden="true"></i>
-        <p class="text-sm text-green-700 dark:text-green-300">{{ session('success') }}</p>
-    </div>
-@endif
+<x-alert :message="session('success')" />
 
 <div class="mb-4 flex items-center justify-between">
     <a href="{{ route('admin.users.create') }}" class="btn-primary">
@@ -94,10 +89,7 @@
             @empty
                 <tr>
                     <td colspan="4" class="px-6 py-16 text-center">
-                        <div class="flex flex-col items-center gap-2">
-                            <i class="bi bi-people text-4xl text-slate-300 dark:text-slate-600" aria-hidden="true"></i>
-                            <p class="text-sm font-medium text-slate-400 dark:text-slate-500">{{ __('admin/users.no_users_found') }}</p>
-                        </div>
+                        <x-empty-state icon="people" :message="__('admin/users.no_users_found')" />
                     </td>
                 </tr>
             @endforelse

@@ -11,12 +11,7 @@
 
 @section('content')
 
-@if (session('success'))
-    <div class="alert-success mb-6">
-        <i class="bi bi-check-circle-fill text-green-500 dark:text-green-400 shrink-0" aria-hidden="true"></i>
-        <p class="text-sm text-green-700 dark:text-green-300">{{ session('success') }}</p>
-    </div>
-@endif
+<x-alert :message="session('success')" />
 
 <div class="mb-4 flex items-center justify-between">
     <a href="{{ route('admin.courses.create') }}" class="btn-primary">
@@ -93,17 +88,10 @@
                 >
                     <td class="px-6 py-4 text-sm font-medium text-slate-900 dark:text-slate-100">{{ $course->title }}</td>
                     <td class="hidden px-6 py-4 sm:table-cell">
-                        @if ($course->status->value === 'published')
-                            <span class="inline-flex items-center gap-1 rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400">
-                                <i class="bi bi-circle-fill text-[6px]" aria-hidden="true"></i>
-                                {{ __('admin/courses.status_published') }}
-                            </span>
-                        @else
-                            <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600 dark:bg-slate-700 dark:text-slate-300">
-                                <i class="bi bi-circle-fill text-[6px]" aria-hidden="true"></i>
-                                {{ __('admin/courses.status_draft') }}
-                            </span>
-                        @endif
+                        <x-status-badge
+                            :status="$course->status->value"
+                            :label="$course->status->value === 'published' ? __('admin/courses.status_published') : __('admin/courses.status_draft')"
+                        />
                     </td>
                     <td class="hidden px-6 py-4 text-sm text-slate-500 dark:text-slate-400 sm:table-cell">
                         {{ $course->created_at->format('d/m/Y') }}
@@ -135,10 +123,7 @@
             @empty
                 <tr>
                     <td colspan="4" class="px-6 py-16 text-center">
-                        <div class="flex flex-col items-center gap-2">
-                            <i class="bi bi-play-circle text-4xl text-slate-300 dark:text-slate-600" aria-hidden="true"></i>
-                            <p class="text-sm font-medium text-slate-400 dark:text-slate-500">{{ __('admin/courses.no_courses_found') }}</p>
-                        </div>
+                        <x-empty-state icon="play-circle" :message="__('admin/courses.no_courses_found')" />
                     </td>
                 </tr>
             @endforelse

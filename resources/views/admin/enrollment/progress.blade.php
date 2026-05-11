@@ -20,31 +20,17 @@
             <span class="mt-1 text-sm text-slate-600 dark:text-slate-300">{{ $enrollment->course?->title ?? '—' }}</span>
         </div>
         <div class="flex flex-col items-end gap-2">
-            @php $status = $enrollment->status->value @endphp
-            @if ($status === 'active')
-                <span class="inline-flex items-center gap-1 rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400">
-                    <i class="bi bi-circle-fill text-[6px]" aria-hidden="true"></i>
-                    {{ __('admin/enrollments.status_active') }}
-                </span>
-            @elseif ($status === 'completed')
-                <span class="inline-flex items-center gap-1 rounded-full bg-sky-100 px-2.5 py-0.5 text-xs font-medium text-sky-700 dark:bg-sky-900/30 dark:text-sky-400">
-                    <i class="bi bi-circle-fill text-[6px]" aria-hidden="true"></i>
-                    {{ __('admin/enrollments.status_completed') }}
-                </span>
-            @else
-                <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600 dark:bg-slate-700 dark:text-slate-300">
-                    <i class="bi bi-circle-fill text-[6px]" aria-hidden="true"></i>
-                    {{ __('admin/enrollments.status_cancelled') }}
-                </span>
-            @endif
+            @php
+                $status = $enrollment->status->value;
+                $statusLabels = [
+                    'active'    => __('admin/enrollments.status_active'),
+                    'completed' => __('admin/enrollments.status_completed'),
+                    'cancelled' => __('admin/enrollments.status_cancelled'),
+                ];
+            @endphp
+            <x-status-badge :status="$status" :label="$statusLabels[$status] ?? $status" />
             <div class="w-48">
-                <div class="mb-1.5 flex items-center justify-between">
-                    <span class="text-xs font-medium text-slate-600 dark:text-slate-400">{{ $progress['watched'] }}/{{ $progress['total'] }}</span>
-                    <span class="text-xs font-semibold text-sky-600 dark:text-sky-400">{{ $progress['percentage'] }}%</span>
-                </div>
-                <div class="h-2 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
-                    <div class="h-full rounded-full bg-sky-500 dark:bg-sky-400 transition-all duration-500" style="width: {{ $progress['percentage'] }}%"></div>
-                </div>
+                <x-progress-bar :percentage="$progress['percentage']" :watched="$progress['watched']" :total="$progress['total']" />
             </div>
         </div>
     </div>
@@ -52,10 +38,7 @@
 
 @if ($modules->isEmpty() || $progress['total'] === 0)
     <div class="card p-12 text-center">
-        <div class="flex flex-col items-center gap-2">
-            <i class="bi bi-journal-x text-4xl text-slate-300 dark:text-slate-600" aria-hidden="true"></i>
-            <p class="text-sm font-medium text-slate-400 dark:text-slate-500">{{ __('admin/enrollments.progress_no_lessons') }}</p>
-        </div>
+        <x-empty-state icon="journal-x" :message="__('admin/enrollments.progress_no_lessons')" />
     </div>
 @else
     <div class="flex flex-col gap-4">

@@ -132,9 +132,8 @@
 
         </div>
         @empty
-        <div class="flex flex-col items-center gap-2 py-16 px-4 text-center">
-            <i class="bi bi-collection text-3xl text-slate-300 dark:text-slate-600" aria-hidden="true"></i>
-            <p class="text-sm text-slate-400 dark:text-slate-500">{{ __('admin/modules.no_modules_found') }}</p>
+        <div class="py-16 px-4 text-center">
+            <x-empty-state icon="collection" :message="__('admin/modules.no_modules_found')" />
         </div>
         @endforelse
 
